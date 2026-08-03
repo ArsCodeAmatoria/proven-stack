@@ -17,9 +17,9 @@ jobs:
       run:
         working-directory: go
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version-file: go/go.mod
           cache-dependency-path: go/go.sum
@@ -49,7 +49,7 @@ jobs:
       - name: Upload coverage to Codecov
         if: ${{ secrets.CODECOV_TOKEN != '' }}
         continue-on-error: true
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage/go.out
@@ -65,7 +65,7 @@ jobs:
           CGO_ENABLED=0 go build -o ../artifacts/go/analytics-worker ./cmd/analytics-worker
 
       - name: Upload Go binaries
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: go-binaries-${{ github.sha }}
           path: artifacts/go/
