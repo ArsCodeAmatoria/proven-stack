@@ -25,7 +25,7 @@ jobs:
       arch: ${{ steps.filter.outputs.arch }}
       any: ${{ steps.filter.outputs.rust == 'true' || steps.filter.outputs.go == 'true' || steps.filter.outputs.web == 'true' || steps.filter.outputs.docker == 'true' || steps.filter.outputs.arch == 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: "1.86.0"

@@ -21,7 +21,7 @@ jobs:
       NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
       BETTER_AUTH_SECRET: ci-only-better-auth-secret-change-me-32b
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v4
         with:
