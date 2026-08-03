@@ -21,13 +21,13 @@ jobs:
       NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
       BETTER_AUTH_SECRET: ci-only-better-auth-secret-change-me-32b
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6.0.9
         with:
           version: 9.15.0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "20.19"
           cache: pnpm
@@ -51,7 +51,7 @@ jobs:
       - name: Upload coverage to Codecov
         if: ${{ secrets.CODECOV_TOKEN != '' }}
         continue-on-error: true
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/web/coverage/lcov.info
@@ -75,7 +75,7 @@ jobs:
           echo "sha=${GITHUB_SHA}" > artifacts/web/revision.txt
 
       - name: Upload web build metadata
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: web-build-meta-${{ github.sha }}
           path: artifacts/web/
