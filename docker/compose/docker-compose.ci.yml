@@ -1,0 +1,29 @@
+# CI-oriented stack (ephemeral, no host bind mounts required beyond defaults).
+# docker compose -f docker/compose/docker-compose.ci.yml up -d
+
+name: proven-ci
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: proven
+      POSTGRES_PASSWORD: proven
+      POSTGRES_DB: proven_ci
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proven -d proven_ci"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  nats:
+    image: nats:2.10-alpine
+    command: ["-js", "-m", "8222"]

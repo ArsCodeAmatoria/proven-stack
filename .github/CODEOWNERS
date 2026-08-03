@@ -1,0 +1,40 @@
+# CODEOWNERS — Proven
+# Team slugs are placeholders; replace with org teams when created.
+# See docs/engineering/GITHUB_REPOSITORY.md §15
+
+# Default
+*                                   @ArsCodeAmatoria/proven-staff
+
+# Frontend
+/apps/web/                          @ArsCodeAmatoria/proven-frontend
+/packages/                          @ArsCodeAmatoria/proven-frontend
+
+# Backend / API
+/apps/api/                          @ArsCodeAmatoria/proven-backend
+/crates/                            @ArsCodeAmatoria/proven-backend
+/db/                                @ArsCodeAmatoria/proven-backend
+
+# Domain hotspots (also backend; tighten when teams exist)
+/crates/modules/proven-safety/      @ArsCodeAmatoria/proven-safety @ArsCodeAmatoria/proven-backend
+/crates/modules/proven-equipment/   @ArsCodeAmatoria/proven-equipment @ArsCodeAmatoria/proven-backend
+/crates/modules/proven-core/        @ArsCodeAmatoria/proven-backend @ArsCodeAmatoria/proven-security
+
+# Workers
+/go/                                @ArsCodeAmatoria/proven-workers
+
+# Contracts shared
+/contracts/                         @ArsCodeAmatoria/proven-backend @ArsCodeAmatoria/proven-frontend
+
+# Docs / architecture
+/docs/                              @ArsCodeAmatoria/proven-architecture
+/AGENTS.md                          @ArsCodeAmatoria/proven-architecture
+/README.md                          @ArsCodeAmatoria/proven-architecture
+
+# DevEx / SRE
+/.github/                           @ArsCodeAmatoria/proven-devex
+/docker/                            @ArsCodeAmatoria/proven-sre
+/deploy/                            @ArsCodeAmatoria/proven-sre
+/infra/                             @ArsCodeAmatoria/proven-sre
+
+# Security policy
+/SECURITY.md                        @ArsCodeAmatoria/proven-security

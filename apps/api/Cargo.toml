@@ -1,0 +1,16 @@
+[package]
+name = "proven-api"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "proven-api"
+path = "src/main.rs"
+
+[dependencies]
+proven-platform = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+anyhow = { workspace = true }

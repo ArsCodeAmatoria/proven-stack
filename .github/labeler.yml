@@ -1,0 +1,31 @@
+web:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/web/**
+          - packages/**
+
+api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/api/**
+          - crates/**
+
+workers:
+  - changed-files:
+      - any-glob-to-any-file:
+          - go/**
+          - apps/workers/**
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**
+          - "*.md"
+
+infra:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docker/**
+          - deploy/**
+          - infra/**
+          - .github/workflows/**

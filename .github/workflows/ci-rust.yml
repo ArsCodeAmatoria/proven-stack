@@ -1,0 +1,43 @@
+name: CI Rust
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/api/**"
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - ".github/workflows/ci-rust.yml"
+  pull_request:
+    paths:
+      - "apps/api/**"
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - ".github/workflows/ci-rust.yml"
+
+concurrency:
+  group: ci-rust-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.86.0"
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy -p proven-api -- -D warnings
+      - name: Test
+        run: cargo test --workspace
+      - name: Build
+        run: cargo build -p proven-api

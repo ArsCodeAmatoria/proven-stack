@@ -1,0 +1,29 @@
+[workspace]
+resolver = "2"
+members = [
+    "apps/api",
+    "crates/proven-shared",
+    "crates/proven-platform",
+]
+default-members = ["apps/api"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "UNLICENSED"
+publish = false
+
+[workspace.dependencies]
+proven-shared = { path = "crates/proven-shared" }
+proven-platform = { path = "crates/proven-platform" }
+axum = "0.8"
+tokio = { version = "1", features = ["full"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+anyhow = "1"

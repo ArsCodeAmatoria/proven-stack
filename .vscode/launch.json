@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug proven-api",
+      "cargo": {
+        "args": ["build", "--bin=proven-api", "--package=proven-api"],
+        "filter": {
+          "name": "proven-api",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PROVEN_API_PORT": "8080",
+        "RUST_LOG": "info"
+      }
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Next.js: web",
+      "command": "pnpm --filter @proven/web dev",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

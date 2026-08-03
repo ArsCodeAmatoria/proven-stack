@@ -1,0 +1,14 @@
+{
+  "name": "proven-stack",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev:web": "pnpm --filter @proven/web dev",
+    "build:web": "pnpm --filter @proven/web build",
+    "lint:web": "pnpm --filter @proven/web lint",
+    "typecheck": "pnpm --filter @proven/web --filter @proven/ui --filter @proven/api-client --filter @proven/pwa-sync typecheck"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

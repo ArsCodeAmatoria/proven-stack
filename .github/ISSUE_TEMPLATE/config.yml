@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/ArsCodeAmatoria/proven-stack/blob/main/SECURITY.md
+    about: Report security issues privately per SECURITY.md — do not file public exploit details.
+  - name: Architecture & docs
+    url: https://github.com/ArsCodeAmatoria/proven-stack/tree/main/docs
+    about: Product and architecture documentation live under docs/.

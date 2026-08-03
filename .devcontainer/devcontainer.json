@@ -1,0 +1,39 @@
+{
+  "name": "Proven Stack",
+  "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20",
+      "nodeGypDependencies": true
+    },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "1.86"
+    },
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.22"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "postCreateCommand": "bash scripts/dev/bootstrap.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "golang.go",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig"
+      ],
+      "settings": {
+        "rust-analyzer.linkedProjects": ["Cargo.toml"]
+      }
+    }
+  },
+  "forwardPorts": [3000, 8080, 8091, 8092, 8093, 8094, 5432, 6379, 4222, 7233],
+  "portsAttributes": {
+    "3000": { "label": "web" },
+    "8080": { "label": "api" },
+    "8091": { "label": "notify-worker" }
+  },
+  "remoteUser": "vscode"
+}

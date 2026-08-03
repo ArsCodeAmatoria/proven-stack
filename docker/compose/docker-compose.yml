@@ -1,0 +1,55 @@
+# Core local dependencies for Proven (foundation).
+# Usage: docker compose -f docker/compose/docker-compose.yml up -d
+
+name: proven
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: proven
+      POSTGRES_PASSWORD: proven
+      POSTGRES_DB: proven
+    volumes:
+      - proven_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proven -d proven"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  nats:
+    image: nats:2.10-alpine
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: ["-js", "-m", "8222"]
+
+  temporal:
+    image: temporalio/auto-setup:1.25.2
+    ports:
+      - "7233:7233"
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=proven
+      - POSTGRES_PWD=proven
+      - POSTGRES_SEEDS=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  proven_pg:

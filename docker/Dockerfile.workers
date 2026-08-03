@@ -1,0 +1,17 @@
+# syntax=docker/dockerfile:1
+
+ARG WORKER=notify-worker
+
+FROM golang:1.22-bookworm AS builder
+ARG WORKER
+WORKDIR /src
+COPY go/go.mod ./
+COPY go ./
+RUN CGO_ENABLED=0 go build -o /out/worker ./cmd/${WORKER}
+
+FROM gcr.io/distroless/static-debian12:nonroot AS runtime
+ARG WORKER
+COPY --from=builder /out/worker /usr/local/bin/worker
+EXPOSE 8091 8092 8093 8094
+USER nonroot:nonroot
+ENTRYPOINT ["/usr/local/bin/worker"]

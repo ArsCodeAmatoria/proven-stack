@@ -1,0 +1,4 @@
+{
+  "extends": "@proven/typescript-config/base.json",
+  "include": ["src"]
+}
