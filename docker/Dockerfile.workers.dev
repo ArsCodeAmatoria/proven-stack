@@ -4,7 +4,7 @@
 
 ARG WORKER=notify-worker
 
-FROM golang:1.22-bookworm
+FROM golang:1.26-bookworm
 
 ARG WORKER
 ENV WORKER=${WORKER}

@@ -2,7 +2,7 @@
 
 ARG WORKER=notify-worker
 
-FROM golang:1.22-bookworm AS builder
+FROM golang:1.26-bookworm AS builder
 ARG WORKER
 WORKDIR /src
 COPY go/go.mod ./
