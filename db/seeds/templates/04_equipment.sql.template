@@ -1,0 +1,2 @@
+-- TEMPLATE ONLY — equipment. Fixture: equipment.json
+-- INSERT INTO equipment.asset (id, company_id, project_id, name, asset_tag, category, status) VALUES (...);

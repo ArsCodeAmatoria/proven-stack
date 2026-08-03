@@ -1,0 +1,29 @@
+[
+  {
+    "id": "eq_crane_lt150",
+    "company_id": "cmp_pacificcrane",
+    "project_id": "prj_harbour_tower",
+    "name": "Liebherr LTM 1100",
+    "asset_tag": "CRN-150",
+    "category": "mobile_crane",
+    "status": "ready"
+  },
+  {
+    "id": "eq_excavator_320",
+    "company_id": "cmp_northstar",
+    "project_id": "prj_river_bridge",
+    "name": "Cat 320 Excavator",
+    "asset_tag": "EX-320",
+    "category": "excavator",
+    "status": "in_use"
+  },
+  {
+    "id": "eq_forklift_f50",
+    "company_id": "cmp_formco",
+    "project_id": null,
+    "name": "Toyota 8FGU25",
+    "asset_tag": "FL-50",
+    "category": "forklift",
+    "status": "maintenance"
+  }
+]

@@ -1,0 +1,35 @@
+# syntax=docker/dockerfile:1
+# Local development image — Air hot reload for a Go worker binary.
+# Build arg WORKER selects cmd/<WORKER> (default: notify-worker).
+
+ARG WORKER=notify-worker
+
+FROM golang:1.22-bookworm
+
+ARG WORKER
+ENV WORKER=${WORKER}
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl \
+  && rm -rf /var/lib/apt/lists/* \
+  && go install github.com/air-verse/air@v1.61.7
+
+WORKDIR /src
+
+COPY go/go.mod go/go.sum* ./
+RUN go mod download || true
+
+COPY docker/air.notify-worker.toml /etc/proven/air.toml
+
+RUN sed -i "s|./cmd/notify-worker|./cmd/${WORKER}|g" /etc/proven/air.toml \
+  && sed -i "s|./tmp/notify-worker|./tmp/${WORKER}|g" /etc/proven/air.toml
+
+ENV PROVEN_WORKER_HOST=0.0.0.0 \
+    PROVEN_WORKER_NOTIFY_PORT=8091 \
+    PROVEN_WORKER_TEMPORAL_IO_PORT=8092 \
+    PROVEN_WORKER_MEDIA_PORT=8093 \
+    PROVEN_WORKER_ANALYTICS_PORT=8094
+
+EXPOSE 8091 8092 8093 8094
+
+CMD ["air", "-c", "/etc/proven/air.toml"]

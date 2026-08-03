@@ -12,28 +12,50 @@
     "ghcr.io/devcontainers/features/go:1": {
       "version": "1.22"
     },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true
+    }
   },
-  "postCreateCommand": "bash scripts/dev/bootstrap.sh",
+  "postCreateCommand": "bash scripts/dev/setup.sh --deps-only",
   "customizations": {
     "vscode": {
       "extensions": [
         "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
         "golang.go",
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "EditorConfig.EditorConfig"
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker",
+        "EditorConfig.EditorConfig",
+        "evilmartians.lefthook-vscode",
+        "ms-playwright.playwright",
+        "vitest.explorer",
+        "usernamehw.errorlens",
+        "vadimcn.vscode-lldb"
       ],
       "settings": {
-        "rust-analyzer.linkedProjects": ["Cargo.toml"]
+        "editor.formatOnSave": true,
+        "rust-analyzer.linkedProjects": ["Cargo.toml"],
+        "rust-analyzer.check.command": "clippy",
+        "go.formatTool": "gofmt",
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
       }
     }
   },
-  "forwardPorts": [3000, 8080, 8091, 8092, 8093, 8094, 5432, 6379, 4222, 7233],
+  "forwardPorts": [3000, 8080, 8091, 8092, 8093, 8094, 5432, 6379, 4222, 7233, 8088],
   "portsAttributes": {
     "3000": { "label": "web" },
     "8080": { "label": "api" },
-    "8091": { "label": "notify-worker" }
+    "8091": { "label": "notify-worker" },
+    "8088": { "label": "temporal-ui" }
   },
   "remoteUser": "vscode"
 }

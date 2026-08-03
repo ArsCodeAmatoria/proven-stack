@@ -1,0 +1,70 @@
+# Proven Lefthook — polyglot monorepo hooks
+# Install: just hooks  (or: pnpm exec lefthook install)
+#
+# Policy:
+#   pre-commit  → fast: fmt/lint/secrets/conflicts
+#   commit-msg  → Conventional Commits
+#   pre-push    → test-fast (full suite stays in CI)
+
+min_version: 1.6.0
+
+pre-commit:
+  parallel: true
+  commands:
+    merge-conflicts:
+      run: |
+        if git diff --cached --name-only -z | xargs -0 grep -lE '^(<<<<<<<|=======|>>>>>>>)' 2>/dev/null; then
+          echo "Merge conflict markers found in staged files"
+          exit 1
+        fi
+        exit 0
+
+    rust-fmt:
+      glob: "*.{rs}"
+      run: cargo fmt --all
+      stage_fixed: true
+
+    rust-clippy:
+      glob: "*.{rs,toml}"
+      run: cargo clippy --workspace --all-targets -- -D warnings
+
+    prettier:
+      glob: "*.{ts,tsx,js,jsx,json,md,yml,yaml,css}"
+      exclude:
+        - "pnpm-lock.yaml"
+        - "Cargo.lock"
+        - "**/go.sum"
+        - "docs/architecture/**"
+      run: pnpm exec prettier --write {staged_files}
+      stage_fixed: true
+
+    eslint:
+      glob: "apps/web/**/*.{ts,tsx}"
+      run: pnpm --filter @proven/web exec eslint --max-warnings=0 {staged_files}
+
+    go-fmt:
+      glob: "go/**/*.go"
+      run: |
+        unformatted="$(gofmt -l {staged_files})"
+        if [ -n "$unformatted" ]; then
+          gofmt -w {staged_files}
+        fi
+      stage_fixed: true
+
+    secrets:
+      run: |
+        if command -v gitleaks >/dev/null 2>&1; then
+          gitleaks protect --staged --redact --verbose
+        else
+          echo "warn: gitleaks not installed — skipping secret scan (install: brew install gitleaks)"
+        fi
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}
+
+pre-push:
+  commands:
+    test-fast:
+      run: just test-fast

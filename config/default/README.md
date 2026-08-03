@@ -1,2 +1,3 @@
-# Default non-secret configuration placeholders.
-# Runtime secrets belong in `.env` / secret managers — never here.
+# Non-secret defaults (documentation only).
+# Runtime configuration is environment-variable driven via proven-config /
+# go/internal/config / @proven/config. See config/examples/*.env.

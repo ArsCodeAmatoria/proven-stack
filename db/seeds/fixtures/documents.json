@@ -1,0 +1,27 @@
+[
+  {
+    "id": "doc_swp_crane",
+    "company_id": "cmp_pacificcrane",
+    "title": "Safe Work Procedure — Mobile Crane Setup",
+    "doc_type": "swp",
+    "version": "1.4",
+    "status": "published"
+  },
+  {
+    "id": "doc_policy_ppe",
+    "company_id": "cmp_northstar",
+    "title": "PPE Policy — Field Operations",
+    "doc_type": "policy",
+    "version": "3.0",
+    "status": "published"
+  },
+  {
+    "id": "doc_drawing_ht_p2",
+    "company_id": "cmp_northstar",
+    "project_id": "prj_harbour_tower",
+    "title": "Harbour Tower Phase 2 — Structural IFC",
+    "doc_type": "drawing",
+    "version": "IFC-B",
+    "status": "controlled"
+  }
+]

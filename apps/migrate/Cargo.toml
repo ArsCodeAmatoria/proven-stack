@@ -1,0 +1,18 @@
+[package]
+name = "proven-migrate"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "proven-migrate"
+path = "src/main.rs"
+
+[dependencies]
+proven-config = { workspace = true }
+proven-db = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+clap = { version = "4", features = ["derive"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

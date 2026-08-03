@@ -1,0 +1,2 @@
+-- TEMPLATE ONLY — inspections. Fixture: inspections.json
+-- INSERT INTO equipment.inspection (id, equipment_id, project_id, inspector_id, template, result) VALUES (...);

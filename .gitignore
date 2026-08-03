@@ -36,6 +36,7 @@ target/
 
 # Go
 go/bin/
+go/tmp/
 *.exe
 *.test
 *.out

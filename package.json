@@ -6,9 +6,22 @@
     "dev:web": "pnpm --filter @proven/web dev",
     "build:web": "pnpm --filter @proven/web build",
     "lint:web": "pnpm --filter @proven/web lint",
-    "typecheck": "pnpm --filter @proven/web --filter @proven/ui --filter @proven/api-client --filter @proven/pwa-sync typecheck"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "pnpm --filter @proven/web --filter @proven/ui --filter @proven/api-client --filter @proven/pwa-sync --filter @proven/config typecheck",
+    "prepare": "lefthook install || true",
+    "docker:up": "./scripts/dev/up.sh",
+    "docker:down": "./scripts/dev/down.sh",
+    "docker:logs": "./scripts/dev/logs.sh",
+    "docker:ps": "./scripts/dev/ps.sh"
   },
   "engines": {
     "node": ">=20.19.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "lefthook": "^2.1.10",
+    "prettier": "^3.9.6"
   }
 }

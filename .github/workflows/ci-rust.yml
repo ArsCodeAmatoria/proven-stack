@@ -1,43 +1,75 @@
 name: CI Rust
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/api/**"
-      - "crates/**"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "rust-toolchain.toml"
-      - ".github/workflows/ci-rust.yml"
-  pull_request:
-    paths:
-      - "apps/api/**"
-      - "crates/**"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "rust-toolchain.toml"
-      - ".github/workflows/ci-rust.yml"
+  workflow_call:
+  workflow_dispatch:
 
 concurrency:
-  group: ci-rust-${{ github.ref }}
+  group: ci-rust-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
 
 jobs:
   rust:
+    name: Lint · Build · Test (Rust)
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: "1.86.0"
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
+
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: proven-rust
+
       - name: Format
         run: cargo fmt --all -- --check
+
       - name: Clippy
-        run: cargo clippy -p proven-api -- -D warnings
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
       - name: Test
         run: cargo test --workspace
+
+      - name: Coverage (optional)
+        continue-on-error: true
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+
+      - name: Generate Rust coverage
+        continue-on-error: true
+        run: |
+          mkdir -p coverage
+          cargo llvm-cov --workspace --lcov --output-path coverage/rust.lcov || true
+
+      - name: Upload coverage to Codecov
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
+        continue-on-error: true
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/rust.lcov
+          flags: rust
+          fail_ci_if_error: false
+
       - name: Build
-        run: cargo build -p proven-api
+        run: |
+          cargo build -p proven-api -p proven-migrate
+          mkdir -p artifacts/rust
+          cp target/debug/proven-api target/debug/proven-migrate artifacts/rust/
+
+      - name: Upload Rust binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-binaries-${{ github.sha }}
+          path: artifacts/rust/
+          if-no-files-found: error
+          retention-days: 7

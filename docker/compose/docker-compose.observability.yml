@@ -1,0 +1,37 @@
+# Optional OpenTelemetry Collector — no Grafana/Prometheus dashboards.
+#
+# Usage (with base stack):
+#   docker compose -f docker/compose/docker-compose.yml \
+#     -f docker/compose/docker-compose.observability.yml \
+#     --project-directory . up -d otel-collector
+
+name: proven
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.120.0
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./deploy/observability/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+      - "13133:13133" # collector health
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "-qO-",
+          "http://127.0.0.1:13133/",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    networks: [proven]
+
+networks:
+  proven:
+    driver: bridge

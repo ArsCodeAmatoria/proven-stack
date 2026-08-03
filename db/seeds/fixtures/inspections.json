@@ -1,0 +1,20 @@
+[
+  {
+    "id": "insp_crane_preuse_01",
+    "equipment_id": "eq_crane_lt150",
+    "project_id": "prj_harbour_tower",
+    "inspector_id": "wkr_alex_nguyen",
+    "template": "crane_pre_use",
+    "result": "pass",
+    "performed_at": "2026-08-03T14:30:00Z"
+  },
+  {
+    "id": "insp_excavator_daily_01",
+    "equipment_id": "eq_excavator_320",
+    "project_id": "prj_river_bridge",
+    "inspector_id": "wkr_jordan_lee",
+    "template": "heavy_equipment_daily",
+    "result": "pass_with_notes",
+    "performed_at": "2026-08-03T13:05:00Z"
+  }
+]

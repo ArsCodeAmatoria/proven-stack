@@ -1,0 +1,2 @@
+-- TEMPLATE ONLY — FLHAs. Fixture: flhas.json
+-- INSERT INTO safety.flha (id, project_id, created_by, task, status, crew_size) VALUES (...);

@@ -18,7 +18,8 @@ echo "==> go build"
 (cd go && go build ./...)
 
 echo "Foundation bootstrap OK."
+echo "  make docker-up            # full Docker stack (recommended)"
+echo "  make docker-deps          # infra only"
 echo "  make dev-api              # http://127.0.0.1:8080/healthz"
 echo "  make dev-web              # http://127.0.0.1:3000"
 echo "  make dev-worker-notify    # http://127.0.0.1:8091/healthz"
-echo "  make deps-up              # optional Postgres/Redis/NATS/Temporal"

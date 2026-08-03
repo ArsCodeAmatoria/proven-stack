@@ -1,0 +1,66 @@
+name: CI Docker
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-docker-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker:
+    name: Build (Docker)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validate Compose files
+        run: |
+          docker compose -f docker/compose/docker-compose.yml --project-directory . config >/dev/null
+          docker compose -f docker/compose/docker-compose.deps.yml --project-directory . config >/dev/null
+          docker compose -f docker/compose/docker-compose.ci.yml config >/dev/null
+          docker compose -f docker/compose/docker-compose.observability.yml --project-directory . config >/dev/null
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.api
+          push: false
+          load: true
+          tags: proven-api:ci
+          cache-from: type=gha,scope=proven-api
+          cache-to: type=gha,mode=max,scope=proven-api
+
+      - name: Build worker image (notify)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.workers
+          push: false
+          load: true
+          tags: proven-notify-worker:ci
+          build-args: WORKER=notify-worker
+          cache-from: type=gha,scope=proven-workers
+          cache-to: type=gha,mode=max,scope=proven-workers
+
+      - name: Record image digests
+        run: |
+          mkdir -p artifacts/docker
+          {
+            echo "proven-api:ci $(docker image inspect proven-api:ci --format '{{.Id}}')"
+            echo "proven-notify-worker:ci $(docker image inspect proven-notify-worker:ci --format '{{.Id}}')"
+          } | tee artifacts/docker/image-ids.txt
+
+      - name: Upload Docker digests
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-digests-${{ github.sha }}
+          path: artifacts/docker/
+          if-no-files-found: error
+          retention-days: 7

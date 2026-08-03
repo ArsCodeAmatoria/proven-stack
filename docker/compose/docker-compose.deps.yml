@@ -1,0 +1,89 @@
+# Dependencies-only stack (Postgres, Redis, NATS, Temporal, Temporal UI).
+# Paths are relative to --project-directory (repo root).
+#
+#   ./scripts/dev/up.sh --deps-only
+#   docker compose -f docker/compose/docker-compose.deps.yml --project-directory . up -d
+
+name: proven-deps
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: proven
+      POSTGRES_PASSWORD: proven
+      POSTGRES_DB: proven
+    volumes:
+      - proven_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proven -d proven"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [proven]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - proven_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks: [proven]
+
+  nats:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: ["-js", "-m", "8222"]
+    networks: [proven]
+
+  temporal:
+    image: temporalio/auto-setup:1.25.2
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "7233:7233"
+    environment:
+      DB: postgres12
+      DB_PORT: "5432"
+      POSTGRES_USER: proven
+      POSTGRES_PWD: proven
+      POSTGRES_SEEDS: postgres
+      DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
+    volumes:
+      - ./docker/compose/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig:ro
+    networks: [proven]
+
+  temporal-ui:
+    image: temporalio/ui:2.31.2
+    restart: unless-stopped
+    depends_on:
+      - temporal
+    ports:
+      - "8088:8080"
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:3000
+    networks: [proven]
+
+networks:
+  proven:
+    driver: bridge
+
+volumes:
+  proven_pg:
+  proven_redis:

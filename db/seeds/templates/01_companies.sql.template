@@ -1,0 +1,8 @@
+-- TEMPLATE ONLY — not executed by proven-migrate.
+-- Future: INSERT INTO core.company (...)
+-- Source fixture: db/seeds/fixtures/companies.json
+
+-- Example (do not run until schema exists):
+-- INSERT INTO core.company (id, legal_name, trade_name, country, region, company_type)
+-- VALUES
+--   ('cmp_northstar', 'Northstar Civil Contractors Ltd.', 'Northstar Civil', 'CA', 'BC', 'general_contractor');

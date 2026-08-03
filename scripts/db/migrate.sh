@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# Placeholder — migrations land with platform schema milestone.
+# Apply platform PostgreSQL migrations (sqlx metadata + platform schema only).
 set -euo pipefail
-echo "No migrations yet (foundation). See db/migrations/platform/."
-exit 0
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$ROOT"
+
+if [[ ! -f .env ]]; then
+  cp .env.example .env
+fi
+
+echo "==> proven-migrate migrate"
+cargo run -q -p proven-migrate -- migrate "$@"

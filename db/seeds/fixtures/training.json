@@ -1,0 +1,20 @@
+[
+  {
+    "id": "trn_fall_protection_2026",
+    "company_id": "cmp_northstar",
+    "title": "Fall Protection Awareness 2026",
+    "assignee_id": "wkr_jordan_lee",
+    "status": "completed",
+    "due_on": "2026-06-30",
+    "completed_on": "2026-06-12"
+  },
+  {
+    "id": "trn_rigging_basics",
+    "company_id": "cmp_pacificcrane",
+    "title": "Basic Rigging Competency",
+    "assignee_id": "wkr_alex_nguyen",
+    "status": "assigned",
+    "due_on": "2026-09-01",
+    "completed_on": null
+  }
+]

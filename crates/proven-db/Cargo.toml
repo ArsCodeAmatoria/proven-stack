@@ -1,0 +1,16 @@
+[package]
+name = "proven-db"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+description = "PostgreSQL pool, migrations, seeds, and health helpers (no business schema)"
+
+[dependencies]
+proven-config = { workspace = true }
+sqlx = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+chrono = { workspace = true }

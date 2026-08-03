@@ -1,0 +1,26 @@
+[
+  {
+    "id": "prj_harbour_tower",
+    "company_id": "cmp_northstar",
+    "name": "Harbour Tower Phase 2",
+    "code": "HT-P2",
+    "city": "Vancouver",
+    "status": "active"
+  },
+  {
+    "id": "prj_river_bridge",
+    "company_id": "cmp_northstar",
+    "name": "Fraser River Bridge Rehab",
+    "code": "FRB-01",
+    "city": "New Westminster",
+    "status": "active"
+  },
+  {
+    "id": "prj_mill_yard",
+    "company_id": "cmp_pacificcrane",
+    "name": "Mill Yard Lift Program",
+    "code": "MY-LIFT",
+    "city": "Prince George",
+    "status": "planning"
+  }
+]

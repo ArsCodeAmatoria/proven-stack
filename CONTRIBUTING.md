@@ -2,7 +2,7 @@
 
 Thanks for contributing to **Proven** — the Construction Compliance Operating System.
 
-This guide covers how to propose changes. For local setup and commands, see [Development Guide](./docs/engineering/DEVELOPMENT.md). For repository layout, labels, and release process, see [GitHub Repository Design](./docs/engineering/GITHUB_REPOSITORY.md) and [Repository Plan](./docs/architecture/REPOSITORY_PLAN.md).
+This guide covers how to propose changes. For local setup and day-to-day commands, start with the [Developer Handbook](./docs/development/README.md) (`just setup`). Legacy notes also live in [Development Guide](./docs/engineering/DEVELOPMENT.md). For repository layout, labels, and release process, see [GitHub Repository Design](./docs/engineering/GITHUB_REPOSITORY.md) and [Repository Plan](./docs/architecture/REPOSITORY_PLAN.md).
 
 ---
 
@@ -19,7 +19,7 @@ This guide covers how to propose changes. For local setup and commands, see [Dev
 - **Trunk-based:** short-lived branches → PR → `main`.  
 - **No direct commits to `main`.**  
 - Branch names: `feat/…`, `fix/…`, `chore/…`, `docs/…`, `hotfix/…`.  
-- Commits: [Conventional Commits](https://www.conventionalcommits.org/) with module scopes (`feat(safety): …`).  
+- Commits: [Conventional Commits](./docs/development/COMMIT_CONVENTIONS.md) with monorepo scopes (`feat(api): …`, `chore(dx): …`).  
 - Prefer **squash merge**.
 
 ---
@@ -37,6 +37,8 @@ Use the PR template. In every PR:
 - Confirm business rules stay in **Rust domain modules**.  
 - Confirm cross-module work uses **public interfaces, events, or Temporal**—not another module’s internals.  
 - Consider **audit logging** for compliance-significant actions.
+
+CI must be green: required check **`PR Validation`** ([details](./docs/engineering/CI_AND_BRANCH_PROTECTION.md)). Run locally with `just ci` or `./scripts/ci/check.sh`. See also [PR Process](./docs/development/PULL_REQUEST_PROCESS.md).
 
 ### Review expectations
 

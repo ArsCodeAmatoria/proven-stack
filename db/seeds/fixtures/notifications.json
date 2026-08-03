@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ntf_flha_signed",
+    "recipient_id": "wkr_samir_patel",
+    "channel": "in_app",
+    "title": "FLHA signed — Harbour Tower Phase 2",
+    "body": "Jordan Lee signed FLHA flha_ht_20260803_a.",
+    "read": false
+  },
+  {
+    "id": "ntf_inspect_due",
+    "recipient_id": "wkr_alex_nguyen",
+    "channel": "push",
+    "title": "Pre-use inspection due",
+    "body": "CRN-150 requires a pre-use inspection before the next lift.",
+    "read": true
+  }
+]

@@ -1,0 +1,3 @@
+-- Local seed profile (foundation).
+-- Intentionally empty: no business reference data yet.
+-- Add ordered *.sql files here when non-domain fixtures are required.

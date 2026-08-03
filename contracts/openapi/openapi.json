@@ -1,0 +1,299 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Proven API",
+    "description": "Construction Compliance Operating System — foundation host (no domain modules yet).",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/db/version": {
+      "get": {
+        "tags": [
+          "database"
+        ],
+        "summary": "`GET /api/v1/db/version` — Postgres + migration metadata versions.",
+        "operationId": "db_version",
+        "responses": {
+          "200": {
+            "description": "Database and migration versions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DbVersionEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "platform"
+        ],
+        "operationId": "api_health",
+        "responses": {
+          "200": {
+            "description": "API health envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiHealthEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/db": {
+      "get": {
+        "tags": [
+          "database"
+        ],
+        "summary": "`GET /api/v1/health/db` — live Postgres pool probe.",
+        "operationId": "db_health",
+        "responses": {
+          "200": {
+            "description": "Database health",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DbHealthEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "platform"
+        ],
+        "summary": "`GET /health` — always HTTP 200 when the process is up.",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Process is alive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "tags": [
+          "platform"
+        ],
+        "summary": "Readiness — requires infra when configured as mandatory.",
+        "operationId": "readyz",
+        "responses": {
+          "200": {
+            "description": "Ready to serve",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Dependencies unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiHealthData": {
+        "type": "object",
+        "required": [
+          "status",
+          "version"
+        ],
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiHealthEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ApiHealthData"
+          }
+        }
+      },
+      "DatabaseVersionBody": {
+        "type": "object",
+        "required": [
+          "postgres_version",
+          "applied_migrations"
+        ],
+        "properties": {
+          "applied_migrations": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "migration_description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "migration_installed_on": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "migration_success": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "migration_version": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "postgres_version": {
+            "type": "string"
+          }
+        }
+      },
+      "DbHealthBody": {
+        "type": "object",
+        "required": [
+          "ok",
+          "latency_ms",
+          "detail",
+          "pool_attached"
+        ],
+        "properties": {
+          "detail": {
+            "type": "string"
+          },
+          "latency_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "pool_attached": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DbHealthEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DbHealthBody"
+          }
+        }
+      },
+      "DbVersionEnvelope": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DatabaseVersionBody"
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "service"
+        ],
+        "properties": {
+          "service": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ReadyResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "service",
+          "postgres",
+          "redis",
+          "nats",
+          "temporal"
+        ],
+        "properties": {
+          "nats": {
+            "type": "boolean"
+          },
+          "postgres": {
+            "type": "boolean"
+          },
+          "redis": {
+            "type": "boolean"
+          },
+          "service": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "temporal": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "platform",
+      "description": "Host health and readiness"
+    },
+    {
+      "name": "database",
+      "description": "PostgreSQL health and migration version"
+    }
+  ]
+}

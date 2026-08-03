@@ -25,6 +25,7 @@ impl Default for CorrelationId {
     }
 }
 
+/// Platform-level application error (no domain semantics).
 #[derive(Debug, thiserror::Error)]
 pub enum AppError {
     #[error("not found")]
@@ -33,12 +34,38 @@ pub enum AppError {
     Unauthorized,
     #[error("forbidden")]
     Forbidden,
+    #[error("bad request: {0}")]
+    BadRequest(String),
+    #[error("service unavailable: {0}")]
+    Unavailable(String),
     #[error("internal error: {0}")]
     Internal(String),
 }
 
-#[derive(Debug, Serialize)]
+impl AppError {
+    pub fn error_code(&self) -> &'static str {
+        match self {
+            Self::NotFound => "not_found",
+            Self::Unauthorized => "unauthorized",
+            Self::Forbidden => "forbidden",
+            Self::BadRequest(_) => "bad_request",
+            Self::Unavailable(_) => "unavailable",
+            Self::Internal(_) => "internal",
+        }
+    }
+}
+
+/// RFC 7807-ish problem body used by the API host.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ProblemDetails {
+    pub title: String,
+    pub status: u16,
+    pub detail: String,
+    pub code: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HealthStatus {
-    pub status: &'static str,
-    pub service: &'static str,
+    pub status: String,
+    pub service: String,
 }

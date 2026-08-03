@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cmp_northstar",
+    "legal_name": "Northstar Civil Contractors Ltd.",
+    "trade_name": "Northstar Civil",
+    "country": "CA",
+    "region": "BC",
+    "type": "general_contractor"
+  },
+  {
+    "id": "cmp_pacificcrane",
+    "legal_name": "Pacific Crane Services Inc.",
+    "trade_name": "Pacific Crane",
+    "country": "CA",
+    "region": "BC",
+    "type": "crane_company"
+  },
+  {
+    "id": "cmp_formco",
+    "legal_name": "FormCo Concrete Forming Ltd.",
+    "trade_name": "FormCo",
+    "country": "CA",
+    "region": "AB",
+    "type": "concrete_forming"
+  }
+]

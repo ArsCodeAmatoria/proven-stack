@@ -1,0 +1,165 @@
+name: CI
+
+# PR validation orchestrator — required check name: "PR Validation"
+# Path-filtered jobs run only when relevant; the gate job always reports.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.filter.outputs.rust }}
+      go: ${{ steps.filter.outputs.go }}
+      web: ${{ steps.filter.outputs.web }}
+      docker: ${{ steps.filter.outputs.docker }}
+      arch: ${{ steps.filter.outputs.arch }}
+      any: ${{ steps.filter.outputs.rust == 'true' || steps.filter.outputs.go == 'true' || steps.filter.outputs.web == 'true' || steps.filter.outputs.docker == 'true' || steps.filter.outputs.arch == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            rust:
+              - 'apps/api/**'
+              - 'apps/migrate/**'
+              - 'crates/**'
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - 'rust-toolchain.toml'
+              - '.github/workflows/ci-rust.yml'
+              - '.github/workflows/ci.yml'
+            go:
+              - 'go/**'
+              - '.github/workflows/ci-go.yml'
+              - '.github/workflows/ci.yml'
+            web:
+              - 'apps/web/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'pnpm-workspace.yaml'
+              - 'pnpm-lock.yaml'
+              - '.github/workflows/ci-web.yml'
+              - '.github/workflows/ci.yml'
+            docker:
+              - 'docker/**'
+              - 'apps/api/**'
+              - 'apps/migrate/**'
+              - 'crates/**'
+              - 'go/**'
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - 'rust-toolchain.toml'
+              - '.github/workflows/ci-docker.yml'
+              - '.github/workflows/ci.yml'
+            arch:
+              - 'apps/**'
+              - 'crates/**'
+              - 'go/**'
+              - 'packages/**'
+              - 'scripts/arch/**'
+              - 'lefthook.yml'
+              - 'justfile'
+              - '.github/workflows/ci.yml'
+
+  rust:
+    name: Rust
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    uses: ./.github/workflows/ci-rust.yml
+    secrets: inherit
+
+  go:
+    name: Go
+    needs: changes
+    if: needs.changes.outputs.go == 'true'
+    uses: ./.github/workflows/ci-go.yml
+    secrets: inherit
+
+  web:
+    name: Next.js
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    uses: ./.github/workflows/ci-web.yml
+    secrets: inherit
+
+  docker:
+    name: Docker
+    needs: changes
+    if: needs.changes.outputs.docker == 'true'
+    uses: ./.github/workflows/ci-docker.yml
+
+  arch:
+    name: Architecture
+    needs: changes
+    if: needs.changes.outputs.arch == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.86.0"
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+          cache-dependency-path: go/go.sum
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.19"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Architecture gates
+        run: ./scripts/arch/check.sh
+
+  # Always runs — configure branch protection to require this check.
+  result:
+    name: PR Validation
+    if: always()
+    needs: [changes, rust, go, web, docker, arch]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate results
+        env:
+          RUST: ${{ needs.rust.result }}
+          GO: ${{ needs.go.result }}
+          WEB: ${{ needs.web.result }}
+          DOCKER: ${{ needs.docker.result }}
+          ARCH: ${{ needs.arch.result }}
+          ANY: ${{ needs.changes.outputs.any }}
+        run: |
+          set -euo pipefail
+          echo "change detection any=${ANY}"
+          echo "rust=${RUST} go=${GO} web=${WEB} docker=${DOCKER} arch=${ARCH}"
+
+          fail=0
+          for status in "$RUST" "$GO" "$WEB" "$DOCKER" "$ARCH"; do
+            case "$status" in
+              failure|cancelled) fail=1 ;;
+              success|skipped) ;;
+              *)
+                echo "unexpected job status: ${status}"
+                fail=1
+                ;;
+            esac
+          done
+
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::One or more CI jobs failed"
+            exit 1
+          fi
+
+          echo "PR validation passed"

@@ -7,6 +7,11 @@
     "dbaeumer.vscode-eslint",
     "bradlc.vscode-tailwindcss",
     "ms-azuretools.vscode-docker",
-    "EditorConfig.EditorConfig"
+    "EditorConfig.EditorConfig",
+    "evilmartians.lefthook-vscode",
+    "ms-playwright.playwright",
+    "vitest.explorer",
+    "usernamehw.errorlens",
+    "vadimcn.vscode-lldb"
   ]
 }

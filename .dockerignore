@@ -4,7 +4,6 @@
 node_modules
 target
 tmp
-*.md
 docs
 assets
 .env
@@ -16,3 +15,5 @@ tests
 playwright-report
 coverage
 **/*.tsbuildinfo
+**/*.md
+!docker/README.md

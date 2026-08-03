@@ -1,0 +1,2 @@
+-- TEMPLATE ONLY — documents. Fixture: documents.json
+-- INSERT INTO documents.document (id, company_id, title, doc_type, version, status) VALUES (...);

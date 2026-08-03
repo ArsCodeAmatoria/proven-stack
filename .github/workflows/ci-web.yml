@@ -1,47 +1,83 @@
 name: CI Web
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/web/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/ci-web.yml"
-  pull_request:
-    paths:
-      - "apps/web/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/ci-web.yml"
+  workflow_call:
+  workflow_dispatch:
 
 concurrency:
-  group: ci-web-${{ github.ref }}
+  group: ci-web-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   web:
+    name: Lint · Build · Test (Next.js)
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_PUBLIC_PROVEN_API_URL: http://127.0.0.1:8080
+      PROVEN_API_URL: http://127.0.0.1:8080
+      PROVEN_ENV: testing
+      BETTER_AUTH_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+      BETTER_AUTH_SECRET: ci-only-better-auth-secret-change-me-32b
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.0
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20.19"
           cache: pnpm
+
       - name: Install
         run: pnpm install --frozen-lockfile
+
       - name: Typecheck
         run: pnpm typecheck
+
       - name: Lint
         run: pnpm lint:web
+
+      - name: Unit tests
+        run: pnpm --filter @proven/web test:unit
+
+      - name: Coverage (optional)
+        continue-on-error: true
+        run: pnpm --filter @proven/web exec vitest run --coverage
+
+      - name: Upload coverage to Codecov
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
+        continue-on-error: true
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/web/coverage/lcov.info
+          flags: web
+          fail_ci_if_error: false
+
+      - name: Architecture (web)
+        run: pnpm --filter @proven/web arch
+
       - name: Build
         run: pnpm build:web
-        env:
-          NEXT_PUBLIC_PROVEN_API_URL: http://127.0.0.1:8080
+
+      - name: Package build metadata
+        run: |
+          mkdir -p artifacts/web
+          if [ -f apps/web/.next/BUILD_ID ]; then
+            cp apps/web/.next/BUILD_ID artifacts/web/BUILD_ID
+          fi
+          pnpm --filter @proven/web exec node -p "require('./package.json').name + '@' + require('./package.json').version" \
+            > artifacts/web/package.txt
+          echo "sha=${GITHUB_SHA}" > artifacts/web/revision.txt
+
+      - name: Upload web build metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build-meta-${{ github.sha }}
+          path: artifacts/web/
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,2 @@
+-- TEMPLATE ONLY — training. Fixture: training.json
+-- INSERT INTO training.assignment (id, company_id, title, assignee_id, status, due_on) VALUES (...);

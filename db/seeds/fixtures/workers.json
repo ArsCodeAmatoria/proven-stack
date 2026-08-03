@@ -1,0 +1,26 @@
+[
+  {
+    "id": "wkr_jordan_lee",
+    "company_id": "cmp_northstar",
+    "project_ids": ["prj_harbour_tower"],
+    "display_name": "Jordan Lee",
+    "role": "site_superintendent",
+    "ticket_tags": ["first_aid", "fall_protection"]
+  },
+  {
+    "id": "wkr_samir_patel",
+    "company_id": "cmp_northstar",
+    "project_ids": ["prj_harbour_tower", "prj_river_bridge"],
+    "display_name": "Samir Patel",
+    "role": "safety_coordinator",
+    "ticket_tags": ["ncso", "confined_space"]
+  },
+  {
+    "id": "wkr_alex_nguyen",
+    "company_id": "cmp_pacificcrane",
+    "project_ids": ["prj_mill_yard"],
+    "display_name": "Alex Nguyen",
+    "role": "crane_operator",
+    "ticket_tags": ["mobile_crane", "rigging"]
+  }
+]

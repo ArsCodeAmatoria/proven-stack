@@ -1,0 +1,33 @@
+# syntax=docker/dockerfile:1
+# Local development image — cargo-watch hot reload for proven-api.
+
+FROM rust:1.86-bookworm
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends curl \
+  && rm -rf /var/lib/apt/lists/* \
+  && cargo install cargo-watch --locked
+
+WORKDIR /app
+
+# Pre-fetch workspace deps for faster first boot (source is bind-mounted at runtime).
+COPY Cargo.toml Cargo.lock rust-toolchain.toml ./
+COPY apps/api/Cargo.toml apps/api/Cargo.toml
+COPY crates/proven-shared/Cargo.toml crates/proven-shared/Cargo.toml
+COPY crates/proven-platform/Cargo.toml crates/proven-platform/Cargo.toml
+
+RUN mkdir -p apps/api/src crates/proven-shared/src crates/proven-platform/src \
+  && printf 'fn main() {}\n' > apps/api/src/main.rs \
+  && printf '\n' > crates/proven-shared/src/lib.rs \
+  && printf '\n' > crates/proven-platform/src/lib.rs \
+  && cargo fetch \
+  && rm -rf apps/api/src crates/proven-shared/src crates/proven-platform/src
+
+ENV CARGO_TERM_COLOR=always \
+    PROVEN_API_HOST=0.0.0.0 \
+    PROVEN_API_PORT=8080 \
+    RUST_LOG=info,tower_http=info
+
+EXPOSE 8080
+
+CMD ["cargo", "watch", "-q", "-w", "apps/api", "-w", "crates", "-x", "run -p proven-api"]

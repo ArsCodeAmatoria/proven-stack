@@ -1,35 +1,73 @@
 name: CI Go
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "go/**"
-      - ".github/workflows/ci-go.yml"
-  pull_request:
-    paths:
-      - "go/**"
-      - ".github/workflows/ci-go.yml"
+  workflow_call:
+  workflow_dispatch:
 
 concurrency:
-  group: ci-go-${{ github.ref }}
+  group: ci-go-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   go:
+    name: Lint · Build · Test (Go)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: go
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-go@v5
         with:
           go-version-file: go/go.mod
           cache-dependency-path: go/go.sum
+
+      - name: Format
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt needed on:"
+            echo "$unformatted"
+            exit 1
+          fi
+
       - name: Vet
         run: go vet ./...
+
       - name: Test
         run: go test ./...
+
+      - name: Coverage (optional)
+        continue-on-error: true
+        working-directory: go
+        run: |
+          mkdir -p ../coverage
+          go test ./... -coverprofile=../coverage/go.out -covermode=atomic
+
+      - name: Upload coverage to Codecov
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
+        continue-on-error: true
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/go.out
+          flags: go
+          fail_ci_if_error: false
+
       - name: Build
-        run: go build ./...
+        run: |
+          mkdir -p ../artifacts/go
+          CGO_ENABLED=0 go build -o ../artifacts/go/notify-worker ./cmd/notify-worker
+          CGO_ENABLED=0 go build -o ../artifacts/go/temporal-io-worker ./cmd/temporal-io-worker
+          CGO_ENABLED=0 go build -o ../artifacts/go/media-worker ./cmd/media-worker
+          CGO_ENABLED=0 go build -o ../artifacts/go/analytics-worker ./cmd/analytics-worker
+
+      - name: Upload Go binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-binaries-${{ github.sha }}
+          path: artifacts/go/
+          if-no-files-found: error
+          retention-days: 7

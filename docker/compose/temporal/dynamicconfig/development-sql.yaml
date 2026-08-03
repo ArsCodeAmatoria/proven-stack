@@ -1,0 +1,10 @@
+# Temporal dynamic config for local development (SQL / auto-setup).
+# Mounted read-only into the temporal service.
+
+limit.maxIDLength:
+  - value: 255
+    constraints: {}
+
+system.forceSearchAttributesCacheRefreshOnRead:
+  - value: true
+    constraints: {}

@@ -5,7 +5,12 @@ import { fileURLToPath } from "url";
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@proven/ui", "@proven/api-client", "@proven/pwa-sync"],
+  transpilePackages: [
+    "@proven/ui",
+    "@proven/api-client",
+    "@proven/pwa-sync",
+    "@proven/config",
+  ],
   outputFileTracingRoot: root,
 };
 

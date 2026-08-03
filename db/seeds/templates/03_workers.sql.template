@@ -1,0 +1,2 @@
+-- TEMPLATE ONLY — people/workers. Fixture: workers.json
+-- INSERT INTO people.worker (id, company_id, display_name, role) VALUES (...);

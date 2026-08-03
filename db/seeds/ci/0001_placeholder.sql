@@ -1,0 +1,2 @@
+-- CI seed profile (foundation).
+-- Intentionally empty: no business fixtures yet.

@@ -53,17 +53,28 @@ Full layout: [GitHub Repository Design](./docs/engineering/GITHUB_REPOSITORY.md)
 
 ### Quick start
 
+**Docker (recommended):**
+
 ```bash
 cp .env.example .env
-./scripts/dev/bootstrap.sh   # or: make bootstrap
+./scripts/dev/up.sh          # full stack with hot reload
+# Web http://localhost:3000 · API :8080 · Temporal UI :8088
+./scripts/dev/down.sh
+```
 
+See [Docker Local Development](./docs/engineering/DOCKER_LOCAL_DEVELOPMENT.md) for every service.
+
+**On the host:**
+
+```bash
+./scripts/dev/bootstrap.sh   # or: make bootstrap
+make docker-deps             # Postgres/Redis/NATS/Temporal/UI
 make dev-api                 # http://127.0.0.1:8080/healthz
 make dev-web                 # http://127.0.0.1:3000  (Node >= 20.19)
 make dev-worker-notify       # http://127.0.0.1:8091/healthz
-make deps-up                 # optional Postgres/Redis/NATS/Temporal
 ```
 
-Requires: Rust (`rust-toolchain.toml`), Go 1.22+, Node.js ≥ 20.19 + pnpm 9.15, Docker (optional deps).
+Requires for host mode: Rust (`rust-toolchain.toml`), Go 1.22+, Node.js ≥ 20.19 + pnpm 9.15, Docker (for deps or full stack).
 
 ---
 
@@ -92,10 +103,14 @@ Architecture style: **modular monolith**. Modules own their domains and integrat
 | --- | --- |
 | [Implementation Roadmap](./docs/architecture/IMPLEMENTATION_ROADMAP.md) | **CTO roadmap:** milestones, MVP, path to enterprise |
 | [AGENTS.md](./AGENTS.md) | Engineering principles and hard constraints |
+| [Developer Handbook](./docs/development/README.md) | Canonical onboarding (`just setup`) |
 | [Contributing](./CONTRIBUTING.md) | Branching, PRs, review expectations |
-| [Development Guide](./docs/engineering/DEVELOPMENT.md) | Local setup (target-state) |
+| [Development Guide](./docs/engineering/DEVELOPMENT.md) | Pointer + Docker companions |
+| [Docker Local Development](./docs/engineering/DOCKER_LOCAL_DEVELOPMENT.md) | Compose stack, ports, hot reload |
+| [Environment Configuration](./docs/engineering/ENVIRONMENT_CONFIGURATION.md) | Typed config, secrets validation, envs |
 | [Security Policy](./SECURITY.md) | Vulnerability reporting |
 | [GitHub Repository Design](./docs/engineering/GITHUB_REPOSITORY.md) | Monorepo layout, CI, release, labels, CODEOWNERS |
+| [CI & Branch Protection](./docs/engineering/CI_AND_BRANCH_PROTECTION.md) | PR Validation, artifacts, required checks |
 
 ### Product & UX
 

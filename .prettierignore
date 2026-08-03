@@ -1,0 +1,23 @@
+# Prettier ignore — keep language-native formatters for Rust/Go
+target/
+**/target/
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+dist/
+**/dist/
+coverage/
+**/coverage/
+pnpm-lock.yaml
+Cargo.lock
+go/go.sum
+*.min.js
+*.min.css
+docker/
+deploy/
+assets/
+*.svg
+*.png
+*.jpg
+*.webp

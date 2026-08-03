@@ -1,28 +1,73 @@
-:root {
-  --bg: #0f1419;
-  --fg: #f3f4f6;
-  --muted: #9ca3af;
-  --accent: #38bdf8;
-  --surface: #1a222d;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  :root {
+    --background: 40 20% 98%;
+    --foreground: 210 24% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 24% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 24% 12%;
+    --primary: 199 78% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 16% 93%;
+    --secondary-foreground: 210 24% 16%;
+    --muted: 210 14% 94%;
+    --muted-foreground: 210 10% 40%;
+    --accent: 168 35% 92%;
+    --accent-foreground: 168 45% 22%;
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 14% 86%;
+    --input: 210 14% 86%;
+    --ring: 199 78% 32%;
+    --radius: 0.5rem;
+    --sidebar: 210 18% 96%;
+    --sidebar-foreground: 210 18% 22%;
+    --sidebar-border: 210 14% 88%;
+    --sidebar-accent: 210 16% 90%;
+  }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  background:
-    radial-gradient(1200px 600px at 10% -10%, #1e3a5f 0%, transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, #0d3d38 0%, transparent 50%),
-    var(--bg);
-  color: var(--fg);
-}
+  .dark {
+    --background: 210 24% 8%;
+    --foreground: 210 16% 96%;
+    --card: 210 22% 11%;
+    --card-foreground: 210 16% 96%;
+    --popover: 210 22% 11%;
+    --popover-foreground: 210 16% 96%;
+    --primary: 196 72% 48%;
+    --primary-foreground: 210 40% 6%;
+    --secondary: 210 16% 16%;
+    --secondary-foreground: 210 16% 92%;
+    --muted: 210 16% 15%;
+    --muted-foreground: 210 10% 64%;
+    --accent: 168 28% 16%;
+    --accent-foreground: 168 40% 78%;
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 14% 18%;
+    --input: 210 14% 18%;
+    --ring: 196 72% 48%;
+    --sidebar: 210 26% 7%;
+    --sidebar-foreground: 210 14% 88%;
+    --sidebar-border: 210 16% 14%;
+    --sidebar-accent: 210 18% 12%;
+  }
 
-a {
-  color: var(--accent);
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply min-h-dvh bg-background font-sans text-foreground antialiased;
+    background-image:
+      radial-gradient(900px 420px at 0% -10%, hsl(199 50% 40% / 0.12), transparent 55%),
+      radial-gradient(700px 380px at 100% 0%, hsl(168 40% 30% / 0.1), transparent 50%);
+  }
 }

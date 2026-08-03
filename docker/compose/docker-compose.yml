@@ -1,11 +1,38 @@
-# Core local dependencies for Proven (foundation).
-# Usage: docker compose -f docker/compose/docker-compose.yml up -d
+# Proven — local development stack (foundation)
+#
+# From repo root:
+#   ./scripts/dev/up.sh
+#   docker compose -f docker/compose/docker-compose.yml --project-directory . up
+#
+# Hot reload: api (cargo-watch), worker (Air), web (Next.js HMR).
+# Paths are relative to --project-directory (repo root).
 
 name: proven
 
+x-app-env: &app-env
+  PROVEN_ENV: development
+  DATABASE_URL: postgres://proven:proven@postgres:5432/proven
+  REDIS_URL: redis://redis:6379
+  NATS_URL: nats://nats:4222
+  TEMPORAL_ADDRESS: temporal:7233
+  TEMPORAL_NAMESPACE: default
+  PROVEN_SESSION_SECRET: dev-only-session-secret-change-me-32b
+  PROVEN_INFRA_OPTIONAL: "false"
+  PROVEN_DB_MAX_CONNECTIONS: "10"
+  PROVEN_DB_MIN_CONNECTIONS: "1"
+  PROVEN_DB_ACQUIRE_TIMEOUT_SECS: "5"
+  PROVEN_DB_IDLE_TIMEOUT_SECS: "600"
+  PROVEN_DB_MAX_LIFETIME_SECS: "1800"
+  PROVEN_MIGRATE_ON_START: "true"
+  PROVEN_MIGRATIONS_DIR: db/migrations/platform
+
 services:
+  # ---------------------------------------------------------------------------
+  # Data & messaging
+  # ---------------------------------------------------------------------------
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
@@ -18,38 +45,193 @@ services:
       test: ["CMD-SHELL", "pg_isready -U proven -d proven"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 12
+      start_period: 10s
+    networks: [proven]
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     ports:
       - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - proven_redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
-      retries: 10
+      retries: 12
+    networks: [proven]
 
   nats:
     image: nats:2.10-alpine
+    restart: unless-stopped
     ports:
       - "4222:4222"
       - "8222:8222"
     command: ["-js", "-m", "8222"]
+    # Official NATS image is minimal (no shell/wget); readiness is TCP publish.
+    networks: [proven]
 
+  # ---------------------------------------------------------------------------
+  # Temporal
+  # ---------------------------------------------------------------------------
   temporal:
     image: temporalio/auto-setup:1.25.2
-    ports:
-      - "7233:7233"
-    environment:
-      - DB=postgres12
-      - DB_PORT=5432
-      - POSTGRES_USER=proven
-      - POSTGRES_PWD=proven
-      - POSTGRES_SEEDS=postgres
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
+    ports:
+      - "7233:7233"
+    environment:
+      DB: postgres12
+      DB_PORT: "5432"
+      POSTGRES_USER: proven
+      POSTGRES_PWD: proven
+      POSTGRES_SEEDS: postgres
+      DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
+    volumes:
+      - ./docker/compose/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig:ro
+    # auto-setup can take a while on first boot; apps use service_started.
+    networks: [proven]
+
+  temporal-ui:
+    image: temporalio/ui:2.31.2
+    restart: unless-stopped
+    depends_on:
+      temporal:
+        condition: service_started
+    ports:
+      - "8088:8080"
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:3000
+    networks: [proven]
+
+  # ---------------------------------------------------------------------------
+  # Application processes (hot reload)
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api.dev
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    environment:
+      <<: *app-env
+      PROVEN_API_HOST: 0.0.0.0
+      PROVEN_API_PORT: "8080"
+      RUST_LOG: info,tower_http=info
+    volumes:
+      - .:/app
+      - api_cargo_registry:/usr/local/cargo/registry
+      - api_cargo_git:/usr/local/cargo/git
+      - api_target:/app/target
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 120s
+    networks: [proven]
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.workers.dev
+      args:
+        WORKER: notify-worker
+    restart: unless-stopped
+    depends_on:
+      nats:
+        condition: service_started
+      temporal:
+        condition: service_started
+      api:
+        condition: service_started
+    ports:
+      - "8091:8091"
+    environment:
+      <<: *app-env
+      PROVEN_WORKER_HOST: 0.0.0.0
+      PROVEN_WORKER_NOTIFY_PORT: "8091"
+      WORKER: notify-worker
+      PROVEN_LOG_LEVEL: info
+      PROVEN_INFRA_OPTIONAL: "false"
+      TEMPORAL_TASK_QUEUE: proven-notify
+      PROVEN_SHUTDOWN_TIMEOUT_SEC: "15"
+    volumes:
+      - ./go:/src
+      - worker_gomod:/go/pkg/mod
+      - worker_tmp:/src/tmp
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8091/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 60s
+    networks: [proven]
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web.dev
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "3000:3000"
+    environment:
+      # Browser → host-published API
+      PROVEN_ENV: development
+      NEXT_PUBLIC_PROVEN_API_URL: http://localhost:8080
+      # RSC / server → Docker network
+      PROVEN_API_URL: http://api:8080
+      BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: dev-only-better-auth-secret-change-me-32b
+      PROVEN_SESSION_SECRET: dev-only-session-secret-change-me-32b
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - web_next:/app/apps/web/.next
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 60s
+    networks: [proven]
+
+networks:
+  proven:
+    driver: bridge
 
 volumes:
   proven_pg:
+  proven_redis:
+  api_cargo_registry:
+  api_cargo_git:
+  api_target:
+  worker_gomod:
+  worker_tmp:
+  web_next:

@@ -1,0 +1,21 @@
+[package]
+name = "proven-observability"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+description = "Structured logging, metrics, correlation, and OpenTelemetry hooks (no dashboards)"
+
+[dependencies]
+proven-config = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+opentelemetry-otlp = { workspace = true }
+opentelemetry-semantic-conventions = { workspace = true }
+metrics = { workspace = true }
+metrics-exporter-prometheus = { workspace = true }
+uuid = { workspace = true }
+http = { workspace = true }

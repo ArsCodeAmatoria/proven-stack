@@ -311,38 +311,38 @@ Prefer **squash merge** to `main`.
 
 ---
 
-## 10. GitHub Actions (Design)
+## 10. GitHub Actions
+
+Implementation: [CI & Branch Protection](./CI_AND_BRANCH_PROTECTION.md).
 
 | Workflow | Trigger | Purpose |
 | --- | --- | --- |
-| `ci.yml` | PR + `main` | Lint/test affected paths |
-| `ci-rust.yml` | `crates/**`, `apps/api/**`, `Cargo.*` | fmt, clippy, test, SQL if needed |
-| `ci-web.yml` | `apps/web/**`, `packages/**` | pnpm lint, typecheck, unit, build |
-| `ci-go.yml` | `go/**` | vet, test, staticcheck |
-| `ci-contracts.yml` | `contracts/**` | OpenAPI/event validate |
-| `ci-docs.yml` | `docs/**` | Link check / markdown lint (optional) |
-| `e2e.yml` | `main` / nightly / labeled PR | Playwright critical paths |
-| `container.yml` | tag / `main` | Build/push API & workers images |
-| `deploy-staging.yml` | `main` | Fly + Vercel staging |
-| `deploy-prod.yml` | `v*` tags + approval | Production |
-| `codeql.yml` | schedule + PR | SAST |
-| `secret-scan.yml` | PR | Gitleaks or equivalent |
+| `ci.yml` | PR + `main` | Path-filtered orchestrator; required check **PR Validation** |
+| `ci-rust.yml` | via `ci.yml` | fmt, clippy, test, build + artifacts |
+| `ci-web.yml` | via `ci.yml` | pnpm lint, typecheck, build + metadata |
+| `ci-go.yml` | via `ci.yml` | gofmt, vet, test, build + artifacts |
+| `ci-docker.yml` | via `ci.yml` | Compose validate + image builds (no push) |
 | `labeler.yml` | PR | Auto area labels |
+| `ci-contracts.yml` | future | OpenAPI/event validate |
+| `e2e.yml` | future | Playwright |
+| `deploy-*.yml` | **not yet** | No deployment in foundation CI |
 
 ### 10.1 CI Rules
 
 - Path filters to minimize cost.  
-- Required status checks on `main`.  
+- Required status check on `main`: **`PR Validation`**.  
 - No production secrets on fork PRs.  
-- Caches: `pnpm`, `cargo`, Go modules.  
+- Caches: `pnpm`, `cargo`, Go modules, Docker GHA layers.  
+- Artifacts retained 7 days (binaries / digests / web metadata).
 
 ### 10.2 Branch Protection (`main`)
 
-- Require PR  
-- Require approvals (CODEOWNERS)  
-- Require CI  
-- No force push  
-- Linear history optional (squash)  
+See [CI & Branch Protection §2](./CI_AND_BRANCH_PROTECTION.md). Summary:
+
+- Require PR + CODEOWNERS reviews  
+- Require **`PR Validation`**  
+- No force push / no branch deletion  
+- Prefer squash + linear history  
 
 ---
 

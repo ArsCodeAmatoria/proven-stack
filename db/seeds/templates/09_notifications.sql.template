@@ -1,0 +1,2 @@
+-- TEMPLATE ONLY — notifications. Fixture: notifications.json
+-- INSERT INTO notifications.inbox_item (id, recipient_id, channel, title, body, read) VALUES (...);

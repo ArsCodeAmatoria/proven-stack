@@ -1,0 +1,20 @@
+[
+  {
+    "id": "flha_ht_20260803_a",
+    "project_id": "prj_harbour_tower",
+    "created_by": "wkr_jordan_lee",
+    "task": "Formwork strip — level 12 perimeter",
+    "hazards": ["fall_from_height", "struck_by", "weather_wind"],
+    "status": "signed",
+    "crew_size": 6
+  },
+  {
+    "id": "flha_frb_20260803_b",
+    "project_id": "prj_river_bridge",
+    "created_by": "wkr_samir_patel",
+    "task": "Pier footing excavation",
+    "hazards": ["excavation_cavein", "utilities", "equipment_traffic"],
+    "status": "draft",
+    "crew_size": 4
+  }
+]
