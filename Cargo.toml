@@ -55,7 +55,7 @@ proven-observability = { path = "crates/proven-observability" }
 proven-events = { path = "crates/proven-events" }
 proven-temporal = { path = "crates/proven-temporal" }
 metrics = "0.24"
-metrics-exporter-prometheus = { version = "0.16", default-features = false }
+metrics-exporter-prometheus = { version = "0.18", default-features = false }
 opentelemetry = { version = "0.29", default-features = false, features = ["trace"] }
 opentelemetry_sdk = { version = "0.29", default-features = false, features = ["rt-tokio", "trace"] }
 opentelemetry-otlp = { version = "0.29", default-features = false, features = ["trace", "http-proto", "reqwest-client", "reqwest-rustls-webpki-roots"] }
