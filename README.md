@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="assets/brand/logo.svg" alt="Proven logo — white fingerprint on earthy mark" width="112" height="112" />
+  <img src="assets/brand/proven-mark.svg?v=3" alt="Proven" width="112" height="112" />
 </p>
 
 <h1 align="center">Proven</h1>
 
 <p align="center">
-  <img src="assets/brand/tagline.svg" alt="Construction Compliance Operating System" width="520" height="28" /><br />
+  <img src="https://img.shields.io/badge/Construction%20Compliance%20Operating%20System-C9A227?style=for-the-badge&labelColor=3F3A32&color=C9A227" alt="Construction Compliance Operating System" /><br />
   Defensible proof that people, equipment, and work are compliant—every day, on every site.
 </p>
 
@@ -15,11 +15,12 @@
   <img alt="Modular monolith" src="https://img.shields.io/badge/architecture-modular%20monolith-6B5E4E?style=flat-square&labelColor=3F3A32" />
 </p>
 
-Proven is built for General Contractors, Prime Contractors, Subcontractors, Crane Companies, Concrete Forming Companies, Civil Contractors, and Industrial Contractors across <img src="assets/brand/regions.svg" alt="Canada, the United States, Australia, and New Zealand" height="18" />.
+Proven is built for General Contractors, Prime Contractors, Subcontractors, Crane Companies, Concrete Forming Companies, Civil Contractors, and Industrial Contractors across
+<img src="https://img.shields.io/badge/Canada%20·%20United%20States%20·%20Australia%20·%20New%20Zealand-C9A227?style=flat-square&labelColor=3F3A32&color=C9A227" alt="Canada, the United States, Australia, and New Zealand" />.
 
 Mobile-first for workers. Desktop-first for supervisors, safety coordinators, project managers, and administrators.
 
-> Logo mark adapted from Lucide [`fingerprint-pattern`](https://lucide.dev/icons/fingerprint-pattern) (ISC). Brand treatment: **white** fingerprint on an **earthy** ground (`#3F3A32`)—no accent ring. Highlight text uses **mustard** (`#C9A227`).
+> Logo mark adapted from Lucide [`fingerprint-pattern`](https://lucide.dev/icons/fingerprint-pattern) (ISC). White fingerprint on earthy `#3F3A32` (no ring). Highlight text: mustard `#C9A227`.
 
 ---
 

@@ -22,7 +22,7 @@ The system must feel **professional, minimal, and fast**—built for job sites a
 **Documentation only — no implementation.**
 
 Logo mark reference: Lucide [fingerprint-pattern](https://lucide.dev/icons/fingerprint-pattern) (identity / proof).
-README treatment: **white** fingerprint on **earthy** `#3F3A32` (`assets/brand/logo.svg`). Highlight / emphasis text uses **mustard** `#C9A227`.
+README treatment: **white** fingerprint on **earthy** `#3F3A32` (`assets/brand/proven-mark.svg`). Highlight / emphasis text uses **mustard** `#C9A227` (shields / emphasis — not a logo ring).
 
 ---
 
