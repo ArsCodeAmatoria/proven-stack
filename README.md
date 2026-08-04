@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/brand/proven-mark.svg?v=3" alt="Proven" width="112" height="112" />
+  <img src="assets/brand/proven-mark.png" alt="Proven" width="112" height="112" />
 </p>
 
 <h1 align="center">Proven</h1>
