@@ -7,9 +7,15 @@ description = "Proven API host — Axum router, AppState DI, infra adapters"
 
 [dependencies]
 proven-shared = { workspace = true }
+proven-core = { workspace = true }
+proven-companies = { workspace = true }
+proven-users = { workspace = true }
+proven-projects = { workspace = true }
 proven-config = { workspace = true }
 proven-db = { workspace = true }
 proven-observability = { workspace = true }
+proven-events = { workspace = true }
+proven-temporal = { workspace = true }
 axum = { workspace = true }
 tokio = { workspace = true }
 tower = { workspace = true }

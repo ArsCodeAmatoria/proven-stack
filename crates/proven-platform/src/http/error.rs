@@ -1,43 +1,59 @@
-//! Axum-friendly error → HTTP problem details.
+//! Axum-friendly error → nested `{ error: … }` envelope (ADR-0013).
 
-use axum::http::StatusCode;
+use axum::http::{HeaderValue, StatusCode};
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use proven_shared::{AppError, ProblemDetails};
+use proven_shared::{AppError, ErrorResponse};
 use tracing::error;
 
 /// Wrapper so handlers can return `Result<T, ApiError>`.
 #[derive(Debug)]
-pub struct ApiError(pub AppError);
+pub struct ApiError {
+    pub error: AppError,
+    pub correlation_id: Option<String>,
+}
+
+impl ApiError {
+    pub fn new(error: AppError) -> Self {
+        Self {
+            error,
+            correlation_id: None,
+        }
+    }
+
+    pub fn with_correlation(mut self, correlation_id: impl Into<String>) -> Self {
+        self.correlation_id = Some(correlation_id.into());
+        self
+    }
+}
 
 impl From<AppError> for ApiError {
     fn from(value: AppError) -> Self {
-        Self(value)
+        Self::new(value)
     }
 }
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        let status = match &self.0 {
-            AppError::NotFound => StatusCode::NOT_FOUND,
-            AppError::Unauthorized => StatusCode::UNAUTHORIZED,
-            AppError::Forbidden => StatusCode::FORBIDDEN,
-            AppError::BadRequest(_) => StatusCode::BAD_REQUEST,
-            AppError::Unavailable(_) => StatusCode::SERVICE_UNAVAILABLE,
-            AppError::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
-        };
+        let status = StatusCode::from_u16(self.error.status_code())
+            .unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
 
-        if matches!(self.0, AppError::Internal(_)) {
-            error!(error = %self.0, "internal API error");
+        if matches!(self.error, AppError::Internal(_)) {
+            error!(error = %self.error, "internal API error");
         }
 
-        let body = ProblemDetails {
-            title: status.canonical_reason().unwrap_or("Error").to_string(),
-            status: status.as_u16(),
-            detail: self.0.to_string(),
-            code: self.0.error_code().to_string(),
-        };
+        let body = ErrorResponse::from_app_error(&self.error, self.correlation_id.clone());
+        let mut response = (status, Json(body)).into_response();
 
-        (status, Json(body)).into_response()
+        if let AppError::RateLimited {
+            retry_after_secs, ..
+        } = &self.error
+        {
+            if let Ok(value) = HeaderValue::from_str(&retry_after_secs.to_string()) {
+                response.headers_mut().insert("retry-after", value);
+            }
+        }
+
+        response
     }
 }

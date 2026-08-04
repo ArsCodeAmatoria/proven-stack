@@ -7,7 +7,10 @@ pub mod health;
 mod metrics;
 mod middleware;
 mod router;
+pub mod temporal;
 
 pub use error::ApiError;
-pub use middleware::CorrelationId;
+pub use middleware::{
+    require_permission, AuthnPolicy, AuthzPrincipal, CorrelationId, RateLimitState,
+};
 pub use router::build_router;

@@ -7,7 +7,7 @@ use crate::error::ConfigError;
 use crate::secret::SecretString;
 use crate::validate::{validate_secrets, validate_startup};
 use crate::{
-    Config, DatabaseConfig, InfraConfig, NatsConfig, ObservabilityConfig, RedisConfig,
+    ApiConfig, Config, DatabaseConfig, InfraConfig, NatsConfig, ObservabilityConfig, RedisConfig,
     SecretsConfig, ServerConfig, TemporalConfig,
 };
 
@@ -162,6 +162,14 @@ fn load_from_map(
     )?;
     let migrations_dir = get_or_default(map, "PROVEN_MIGRATIONS_DIR", "db/migrations/platform");
 
+    let rate_limit_per_minute = parse_u32(map, "PROVEN_RATE_LIMIT_PER_MINUTE", 600)?;
+    let rate_limit_enabled = parse_bool(map, "PROVEN_RATE_LIMIT_ENABLED", true)?;
+    let enforce_authn = parse_bool(
+        map,
+        "PROVEN_ENFORCE_AUTHN",
+        matches!(environment, Environment::Production),
+    )?;
+
     if !missing.is_empty() {
         return Err(ConfigError::missing(missing));
     }
@@ -203,6 +211,11 @@ fn load_from_map(
         infra: InfraConfig {
             optional: infra_optional,
             db_max_connections,
+        },
+        api: ApiConfig {
+            rate_limit_per_minute: rate_limit_per_minute.max(1),
+            rate_limit_enabled,
+            enforce_authn,
         },
     };
 

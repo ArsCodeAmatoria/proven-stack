@@ -24,7 +24,10 @@ This document defines **every Temporal workflow** used by Proven: purpose, input
 3. Prefer **Rust activities** for domain commands; **Go activities** for PDF/OCR/media/export I/O.  
 4. Activities are **idempotent** (keyed by workflow id + business mutation id).
 
-**Documentation only — no implementation.**
+**Documentation** — workflow catalog remains authoritative for future designs. **Infrastructure**
+(client port, registries, retry, health) is implemented in `proven-temporal`
+([ADR-0012](../adr/0012-temporal-integration.md), [TEMPORAL_INTEGRATION.md](../development/TEMPORAL_INTEGRATION.md)).
+**No workflows are registered yet.**
 
 ---
 

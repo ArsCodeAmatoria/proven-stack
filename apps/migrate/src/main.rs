@@ -9,7 +9,7 @@ use proven_db::{connect_pool, migrate, migrations_dir, run_seeds, seeds_dir};
 #[derive(Parser, Debug)]
 #[command(
     name = "proven-migrate",
-    about = "Proven PostgreSQL migrate/seed CLI (no business schema)"
+    about = "Proven PostgreSQL migrate/seed CLI (platform + core schemas)"
 )]
 struct Cli {
     #[command(subcommand)]
@@ -18,7 +18,7 @@ struct Cli {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    /// Apply pending sqlx migrations from db/migrations/platform
+    /// Apply pending sqlx migrations (default: platform then core when --dir omitted)
     Migrate {
         #[arg(long)]
         dir: Option<PathBuf>,
@@ -58,18 +58,27 @@ async fn run() -> anyhow::Result<()> {
 
     match cli.command {
         Commands::Migrate { dir } => {
-            let path = dir.unwrap_or_else(|| {
-                if !config.database.migrations_dir.is_empty() {
-                    PathBuf::from(&config.database.migrations_dir)
-                } else {
-                    migrations_dir()
-                }
-            });
-            let status = migrate(&pool, &path).await.context("migrate failed")?;
-            println!(
-                "migrations ok: applied={} directory={}",
-                status.applied, status.directory
-            );
+            let dirs: Vec<PathBuf> = if let Some(path) = dir {
+                vec![path]
+            } else if !config.database.migrations_dir.is_empty() {
+                vec![PathBuf::from(&config.database.migrations_dir)]
+            } else {
+                vec![
+                    migrations_dir(),
+                    PathBuf::from("db/migrations/core"),
+                    PathBuf::from("db/migrations/companies"),
+                    PathBuf::from("db/migrations/users"),
+                ]
+            };
+            for path in dirs {
+                let status = migrate(&pool, &path)
+                    .await
+                    .with_context(|| format!("migrate failed for {}", path.display()))?;
+                println!(
+                    "migrations ok: applied={} directory={}",
+                    status.applied, status.directory
+                );
+            }
         }
         Commands::Seed { profile, dir } => {
             let path = dir.unwrap_or_else(|| seeds_dir(&profile));

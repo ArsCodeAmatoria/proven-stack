@@ -1,42 +1,35 @@
 # Database
 
-PostgreSQL foundation for Proven: migrations, seeds, and pool configuration.
+PostgreSQL for Proven: migrations, seeds, and pool configuration.
 
 ## Layout
 
 ```text
 db/
 ├── migrations/
-│   └── platform/          # sqlx migrations (metadata + platform schema only)
+│   ├── platform/          # sqlx ledger + platform schema (outbox, …)
+│   ├── core/              # Core foundation schema
+│   ├── companies/         # Company profile schema (ADR-0005)
+│   └── users/             # User account profile schema (ADR-0006)
 ├── seeds/
-│   ├── local/             # developer seed SQL (empty foundation)
-│   └── ci/                # CI seed SQL (empty foundation)
+│   ├── local/
+│   ├── ci/
+│   ├── fixtures/          # offline demo JSON (not executed)
+│   └── templates/         # future INSERT shapes (comment-only)
 └── README.md
 ```
 
 ## Commands
 
 ```bash
-# Apply migrations (creates public._sqlx_migrations + platform schema)
-cargo run -p proven-migrate -- migrate
-# or
+# Apply platform then core migrations
 ./scripts/db/migrate.sh
-
-# Run seed profile (no-op until real seed SQL exists)
-cargo run -p proven-migrate -- seed local
-./scripts/db/seed.sh local
+# or
+cargo run -p proven-migrate -- migrate
 ```
-
-## API endpoints
-
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/v1/health/db` | Live pool probe (`SELECT 1`) |
-| `GET` | `/api/v1/db/version` | Postgres `version()` + latest `_sqlx_migrations` row |
-| `GET` | `/readyz` | Readiness includes live Postgres health |
 
 ## Rules
 
-- No business schemas/tables in foundation migrations.
-- Only `platform` schema + sqlx migration ledger (`_sqlx_migrations`).
-- Expand/contract for future module migrations under `db/migrations/<module>/`.
+- Schema ownership: `platform`, `core`, `companies`, `users`. No Projects/People schemas yet.
+- No cross-schema FKs; UUID references only ([ADR-0004](../docs/adr/0004-core-persistence.md), [ADR-0005](../docs/adr/0005-companies-profile-module.md), [ADR-0006](../docs/adr/0006-users-profile-module.md)).
+- Other modules must not SQL into these schemas — use public APIs.

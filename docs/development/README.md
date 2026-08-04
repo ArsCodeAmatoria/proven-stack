@@ -18,6 +18,16 @@ Architecture deep-dives remain under [`docs/architecture/`](../architecture/). P
 | [Architecture Overview](./ARCHITECTURE_OVERVIEW.md) | Modular monolith |
 | [DDD Guidelines](./DDD_GUIDELINES.md) | Bounded contexts |
 | [Architecture Gates](./ARCHITECTURE_GATES.md) | Automated boundaries |
+| [Core Platform](./CORE_PLATFORM.md) | Foundation module (`proven-core`) |
+| [Enterprise RBAC](./ENTERPRISE_RBAC.md) | RoleEngine / PermissionEngine, overrides, ABAC-ready policies |
+| [Audit Engine](./AUDIT_ENGINE.md) | Append-only audit SoR — record, search, export, retention |
+| [File Management](./FILE_MANAGEMENT.md) | R2-backed files — classes, versions, scan hook, links |
+| [NATS Events](./NATS_EVENTS.md) | Shared event library — publish/subscribe, naming, retry |
+| [Temporal Integration](./TEMPORAL_INTEGRATION.md) | Client, worker/registries, retry, health (no workflows yet) |
+| [REST API Conventions](./REST_API_CONVENTIONS.md) | Versioning, envelopes, paging, AuthN/Z, rate limits, OpenAPI |
+| [Companies Module](./COMPANIES_MODULE.md) | Company profile & configuration |
+| [Users Module](./USERS_MODULE.md) | Account profile & preferences |
+| [Projects Module](./PROJECTS_MODULE.md) | Place skeleton — create, update, archive, membership |
 | [Rust Guidelines](./RUST_GUIDELINES.md) | API / crates |
 | [Go Guidelines](./GO_GUIDELINES.md) | Workers (I/O only) |
 | [TypeScript Guidelines](./TYPESCRIPT_GUIDELINES.md) | Next.js / packages |

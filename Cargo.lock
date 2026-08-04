@@ -1805,6 +1805,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "proven-companies"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "chrono",
+ "proven-core",
+ "proven-shared",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.19",
+ "tokio",
+ "tracing",
+ "utoipa",
+ "uuid",
+]
+
+[[package]]
 name = "proven-config"
 version = "0.1.0"
 dependencies = [
@@ -1812,6 +1830,26 @@ dependencies = [
  "serde",
  "serial_test",
  "thiserror 2.0.19",
+]
+
+[[package]]
+name = "proven-core"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "chrono",
+ "hex",
+ "proven-shared",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "sqlx",
+ "thiserror 2.0.19",
+ "tokio",
+ "tracing",
+ "utoipa",
+ "uuid",
 ]
 
 [[package]]
@@ -1826,6 +1864,24 @@ dependencies = [
  "thiserror 2.0.19",
  "tokio",
  "tracing",
+]
+
+[[package]]
+name = "proven-events"
+version = "0.1.0"
+dependencies = [
+ "async-nats",
+ "async-trait",
+ "bytes",
+ "chrono",
+ "futures-util",
+ "proven-shared",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.19",
+ "tokio",
+ "tracing",
+ "uuid",
 ]
 
 [[package]]
@@ -1870,10 +1926,16 @@ dependencies = [
  "http",
  "http-body-util",
  "metrics",
+ "proven-companies",
  "proven-config",
+ "proven-core",
  "proven-db",
+ "proven-events",
  "proven-observability",
+ "proven-projects",
  "proven-shared",
+ "proven-temporal",
+ "proven-users",
  "redis",
  "serde",
  "serde_json",
@@ -1890,12 +1952,65 @@ dependencies = [
 ]
 
 [[package]]
+name = "proven-projects"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "chrono",
+ "proven-core",
+ "proven-shared",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.19",
+ "tokio",
+ "tracing",
+ "utoipa",
+ "uuid",
+]
+
+[[package]]
 name = "proven-shared"
 version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.19",
+ "utoipa",
+ "uuid",
+]
+
+[[package]]
+name = "proven-temporal"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "chrono",
+ "proven-shared",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.19",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "proven-users"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "chrono",
+ "proven-core",
+ "proven-shared",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.19",
+ "tokio",
+ "tracing",
+ "utoipa",
  "uuid",
 ]
 
@@ -2742,6 +2857,7 @@ dependencies = [
  "tokio-stream",
  "tracing",
  "url",
+ "uuid",
  "webpki-roots 0.26.11",
 ]
 
@@ -2823,6 +2939,7 @@ dependencies = [
  "stringprep",
  "thiserror 2.0.19",
  "tracing",
+ "uuid",
  "whoami",
 ]
 
@@ -2861,6 +2978,7 @@ dependencies = [
  "stringprep",
  "thiserror 2.0.19",
  "tracing",
+ "uuid",
  "whoami",
 ]
 
@@ -2887,6 +3005,7 @@ dependencies = [
  "thiserror 2.0.19",
  "tracing",
  "url",
+ "uuid",
 ]
 
 [[package]]

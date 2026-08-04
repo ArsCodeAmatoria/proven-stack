@@ -27,9 +27,19 @@ if [[ -f "$ROOT/apps/web/dependency-cruiser.cjs" ]]; then
   fi
 fi
 
-echo "==> arch: no crates/modules feature crates yet (placeholder guard)"
-if [[ -d crates/modules ]] && find crates/modules -name 'Cargo.toml' 2>/dev/null | grep -q .; then
-  echo "note: domain crates present — extend check_rust_deps.py module matrix"
+echo "==> arch: Core + Companies + Users + Projects modules only under crates/modules/"
+if [[ -d crates/modules ]]; then
+  for dir in crates/modules/proven-*; do
+    [[ -d "$dir" ]] || continue
+    name="$(basename "$dir")"
+    case "$name" in
+      proven-core|proven-companies|proven-users|proven-projects) ;;
+      *)
+        echo "error: unexpected domain module crate: $dir"
+        FAIL=1
+        ;;
+    esac
+  done
 fi
 
 if [[ "$FAIL" -ne 0 ]]; then

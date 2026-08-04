@@ -30,6 +30,8 @@ pub struct Config {
     pub observability: ObservabilityConfig,
     pub secrets: SecretsConfig,
     pub infra: InfraConfig,
+    /// REST API cross-cutting settings (ADR-0013).
+    pub api: ApiConfig,
 }
 
 impl std::fmt::Debug for Config {
@@ -44,7 +46,29 @@ impl std::fmt::Debug for Config {
             .field("observability", &self.observability)
             .field("secrets", &self.secrets)
             .field("infra", &self.infra)
+            .field("api", &self.api)
             .finish()
+    }
+}
+
+/// REST API convention knobs (rate limits, AuthN enforcement).
+#[derive(Debug, Clone, Serialize)]
+pub struct ApiConfig {
+    /// Requests per client key per rolling minute (REST_API.md §11 baseline).
+    pub rate_limit_per_minute: u32,
+    /// When false, rate-limit middleware is a no-op (headers still omitted).
+    pub rate_limit_enabled: bool,
+    /// When true, `/api/v1/*` (except public) requires Bearer or interim headers.
+    pub enforce_authn: bool,
+}
+
+impl Default for ApiConfig {
+    fn default() -> Self {
+        Self {
+            rate_limit_per_minute: 600,
+            rate_limit_enabled: true,
+            enforce_authn: false,
+        }
     }
 }
 

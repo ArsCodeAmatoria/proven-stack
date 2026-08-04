@@ -1,0 +1,24 @@
+[package]
+name = "proven-projects"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+description = "Proven Projects — Place aggregate skeleton (create, update, archive, membership)"
+
+[dependencies]
+proven-shared = { workspace = true }
+proven-core = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
+async-trait = "0.1"
+utoipa = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+proven-core = { workspace = true }

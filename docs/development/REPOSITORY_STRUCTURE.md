@@ -4,7 +4,8 @@
 apps/web          Next.js App Router
 apps/api          Rust Axum binary
 apps/migrate      SQL migrate/seed CLI
-crates/           proven-platform, proven-config, proven-db, proven-observability, proven-shared
+crates/           proven-platform, proven-config, proven-db, proven-observability, proven-shared,
+                  proven-events, proven-temporal, modules/*
 go/               I/O workers
 packages/         shared TS packages
 db/               migrations + seeds/fixtures

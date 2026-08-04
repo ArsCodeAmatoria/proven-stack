@@ -14,4 +14,8 @@ just docs
 # or: ./scripts/codegen/export-openapi.sh
 ```
 
-OpenAPI is generated from utoipa (`proven-platform`). Keep `/api/v1` versioned; auth examples will expand with Core AuthN adapter.
+OpenAPI is generated from utoipa (`proven-platform`). Keep `/api/v1` versioned.
+
+Conventions for every endpoint: [REST_API_CONVENTIONS.md](./REST_API_CONVENTIONS.md) (ADR-0013).
+Versioned OpenAPI is also at `GET /api/v1/openapi.json`. Security schemes: `bearerAuth`,
+`apiKeyAuth`, interim `X-Proven-*` headers.

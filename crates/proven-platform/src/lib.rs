@@ -1,5 +1,5 @@
 //! Proven platform host — Axum router, AppState DI, infra adapters.
-//! Business domain modules are registered in later milestones.
+//! Registers `proven-core` as the Open Host Service for tenancy/identity/AuthZ.
 
 pub mod http;
 pub mod infra;

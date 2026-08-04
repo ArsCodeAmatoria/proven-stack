@@ -19,7 +19,9 @@ This document defines the **Projects** bounded context for Proven.
 
 Projects is the **Place** module of the Construction Compliance Operating System: it defines the construction undertaking, who participates as companies, where work happens, what is required on that site, and the project-scoped operating dashboard.
 
-**Documentation only — no application code.**
+**Documentation + implemented skeleton** — see crate `proven-projects` and
+[ADR-0009](../adr/0009-projects-module.md). Full Place capabilities beyond create/update/archive/
+membership remain future work.
 
 ---
 

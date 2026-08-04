@@ -16,6 +16,14 @@ ALLOWED_APP_DEPS = {
     "proven-migrate": {"proven-config", "proven-db"},
 }
 
+# Host may wire Core; other apps must not import crates/modules directly.
+ALLOWED_MODULE_CONSUMERS = {
+    "proven-platform": {"proven-core", "proven-companies", "proven-users", "proven-projects"},
+    "proven-companies": {"proven-core"},
+    "proven-users": {"proven-core"},
+    "proven-projects": {"proven-core"},
+}
+
 # Crates that must never depend on each other as "feature modules" (future).
 FEATURE_PREFIX = "proven-"
 INFRA = {
@@ -24,6 +32,12 @@ INFRA = {
     "proven-config",
     "proven-db",
     "proven-observability",
+}
+CORE_MODULES = {"proven-core"}
+ALLOWED_FEATURE_DEPS = {
+    "proven-companies": {"proven-core"},
+    "proven-users": {"proven-core"},
+    "proven-projects": {"proven-core"},
 }
 
 
@@ -71,27 +85,36 @@ def main() -> int:
                 print(f"error: {name} has unexpected proven-* deps: {sorted(unexpected)}")
                 fail = 1
 
-        # Feature modules must not import other feature modules (when they exist).
+        # Feature modules must not import other feature modules except allowlisted edges.
         if name.startswith(FEATURE_PREFIX) and name not in INFRA and name not in (
             "proven-api",
             "proven-migrate",
         ):
+            allowed_feature = ALLOWED_FEATURE_DEPS.get(name, set())
             for d in dep_names:
                 if (
                     d.startswith(FEATURE_PREFIX)
                     and d not in INFRA
                     and d != name
                     and d not in ("proven-api", "proven-migrate")
+                    and d not in allowed_feature
                 ):
                     print(f"error: feature crate {name} must not depend on feature crate {d}")
                     fail = 1
 
-    # Forbid apps importing future modules path via path deps under crates/modules
+    # Path-deps into crates/modules only for allowlisted consumers.
     for pkg in members:
         for d in pkg.get("dependencies", []):
             path = d.get("path")
-            if path and "crates/modules" in path.replace("\\", "/"):
-                print(f"error: {pkg['name']} depends on crates/modules path {path}")
+            if not path or "crates/modules" not in path.replace("\\", "/"):
+                continue
+            dep_name = d["name"]
+            allowed = ALLOWED_MODULE_CONSUMERS.get(pkg["name"], set())
+            if dep_name not in allowed:
+                print(
+                    f"error: {pkg['name']} depends on crates/modules path {path} "
+                    f"(allowed consumers: {ALLOWED_MODULE_CONSUMERS})"
+                )
                 fail = 1
 
     return fail

@@ -1,0 +1,21 @@
+[package]
+name = "proven-temporal"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+description = "Proven Temporal infrastructure — client, worker/registries, retry, health (no workflows yet)"
+
+[dependencies]
+proven-shared = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
+async-trait = "0.1"
+anyhow = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }

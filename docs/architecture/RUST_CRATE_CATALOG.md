@@ -31,6 +31,8 @@ Cargo workspace
 └── crates/
     ├── proven-shared
     ├── proven-platform
+    ├── proven-events                # NATS event library (ADR-0011)
+    ├── proven-temporal              # Temporal infra — client/registries/retry/health (ADR-0012)
     ├── proven-contracts             # optional shared DTO mirrors
     ├── proven-test-support
     └── modules/
@@ -140,18 +142,18 @@ crates/modules/proven-<module>/
 
 ---
 
-### 3.5 `proven-workflows`
+### 3.5 `proven-temporal` (implemented) + `proven-workflows` (planned)
 
 | Aspect | Design |
 | --- | --- |
-| **Purpose** | Temporal client ports, workflow start/signal helpers, instance projection APIs used by modules; **not** a place for domain invariants. Catalog alignment with [TEMPORAL_WORKFLOWS.md](./TEMPORAL_WORKFLOWS.md). |
-| **Public API** | `WorkflowPort` (`start`, `signal`, `cancel`, `describe`); HTTP visibility routes under `/workflows` |
-| **Dependencies** | `proven-shared`, `proven-core` (AuthZ); Temporal SDK; modules call port—not Temporal directly from domain |
-| **Events** | `WorkflowStarted/Completed/Failed`, `EscalationTriggered` |
-| **Database** | Schema `workflows` — definitions/instances tracking |
-| **Configuration** | Temporal host, namespace, task queues |
-| **Testing** | Port fakes; integ with Temporal test server optional |
-| **Folder Structure** | Standard module layout |
+| **Purpose** | **`proven-temporal`**: shared Temporal infrastructure — workflow client port, worker registration, workflow/activity **metadata** registries, retry policies, errors, logging, health. **No workflows yet** ([ADR-0012](../adr/0012-temporal-integration.md)). **`proven-workflows`** (future): register executors, instance projection APIs, catalog alignment with [TEMPORAL_WORKFLOWS.md](./TEMPORAL_WORKFLOWS.md). |
+| **Public API** | `WorkflowClient` (`start`, `signal`, `cancel`, `describe`); `WorkerRegistration`; registries; `TemporalHealthChecker` |
+| **Dependencies** | `proven-shared`; Temporal SDK wiring deferred to `proven-workflows`. Modules call the client port — not Temporal directly. |
+| **Events** | Future: `WorkflowStarted/Completed/Failed`, `EscalationTriggered` |
+| **Database** | Future schema `workflows` — definitions/instances tracking |
+| **Configuration** | Temporal host, namespace, task queues (`proven-domain`, `proven-io`, …) |
+| **Testing** | In-memory client; TCP health probe tests; integ with Temporal test server optional |
+| **Folder Structure** | `crates/proven-temporal` (infra); future `crates/modules/proven-workflows` |
 | **Ownership** | Platform + workflow owners |
 
 ---

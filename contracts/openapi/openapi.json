@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Proven API",
-    "description": "Construction Compliance Operating System — foundation host (no domain modules yet).",
+    "description": "Construction Compliance Operating System — platform host + Core foundation module.",
     "license": {
       "name": ""
     },

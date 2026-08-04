@@ -19,7 +19,9 @@ This document defines **every integration/domain event** used by Proven: naming,
 
 Transport: **PostgreSQL transactional outbox → NATS** (primary). Temporal signals are process orchestration, not this catalog—though workflows often **react to** or **cause** these events.
 
-**Documentation only — no implementation.**
+**Shared library implemented** — see crate `proven-events`, [ADR-0011](../adr/0011-nats-event-system.md),
+and [NATS_EVENTS.md](../development/NATS_EVENTS.md). Transactional outbox relay and JetStream
+durable consumers remain follow-ups.
 
 ---
 

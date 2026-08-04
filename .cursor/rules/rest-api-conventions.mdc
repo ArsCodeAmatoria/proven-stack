@@ -1,0 +1,25 @@
+---
+description: REST API conventions for Proven HTTP handlers (ADR-0013)
+globs: "**/api/**/*.rs,**/http/**/*.rs"
+alwaysApply: false
+---
+
+# REST API Conventions
+
+Follow `docs/development/REST_API_CONVENTIONS.md` and ADR-0013.
+
+## Must
+
+- Mount under `/api/v1/...`
+- Success: `DataEnvelope` / `ListEnvelope` (not bare JSON for new endpoints)
+- Lists: `ListQuery` + cursor paging (default 25, max 100); strict filter whitelist
+- Errors: nested `{ error: { code, message, details?, correlation_id? } }` via `AppError`
+- Domain validation → `AppError::Validation` (HTTP 422)
+- AuthZ via Core `AuthzApi` / `require_permission` — never trust client permissions
+- Annotate with utoipa; rely on host AuthN, rate-limit, version, correlation layers
+
+## Must not
+
+- Reimplement rate limiting, correlation IDs, or flat problem bodies
+- Use offset paging for hot field list APIs
+- Put business rules in handlers

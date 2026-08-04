@@ -116,6 +116,9 @@ Validates `NEXT_PUBLIC_PROVEN_API_URL` / `PROVEN_API_URL`.
 | `PROVEN_OTEL_ENABLED` | true when endpoint set | export OTLP traces |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` / `PROVEN_OTEL_ENDPOINT` | empty | Collector base URL (e.g. `http://127.0.0.1:4318`) |
 | `PROVEN_OTEL_SAMPLE_RATIO` | `1.0` | head sample ratio |
+| `PROVEN_RATE_LIMIT_PER_MINUTE` | `600` | REST rate-limit budget (ADR-0013) |
+| `PROVEN_RATE_LIMIT_ENABLED` | `true` | toggle in-process rate limiter |
+| `PROVEN_ENFORCE_AUTHN` | `true` in production | require Bearer or interim headers on `/api/v1/*` |
 
 Worker ports: `PROVEN_WORKER_*_PORT` or `PROVEN_WORKER_PORT`.
 

@@ -1,18 +1,25 @@
 <p align="center">
-  <img src="assets/brand/logo.svg" alt="Proven logo" width="96" height="96" />
+  <img src="assets/brand/logo.svg" alt="Proven logo — white fingerprint on earthy mark with mustard highlight" width="112" height="112" />
 </p>
 
 <h1 align="center">Proven</h1>
 
 <p align="center">
-  <strong>Construction Compliance Operating System</strong> for contractors who need defensible proof that people, equipment, and work are compliant—every day, on every site.
+  <strong>Construction Compliance Operating System</strong><br />
+  Defensible proof that people, equipment, and work are compliant—every day, on every site.
+</p>
+
+<p align="center">
+  <img alt="Earthy · Mustard accent" src="https://img.shields.io/badge/brand-earthy%20%C2%B7%20mustard-C9A227?style=flat-square&labelColor=3F3A32" />
+  <img alt="API v1" src="https://img.shields.io/badge/API-v1-8B7355?style=flat-square&labelColor=3F3A32" />
+  <img alt="Modular monolith" src="https://img.shields.io/badge/architecture-modular%20monolith-6B5E4E?style=flat-square&labelColor=3F3A32" />
 </p>
 
 Proven is built for General Contractors, Prime Contractors, Subcontractors, Crane Companies, Concrete Forming Companies, Civil Contractors, and Industrial Contractors across **Canada, the United States, Australia, and New Zealand**.
 
 Mobile-first for workers. Desktop-first for supervisors, safety coordinators, project managers, and administrators.
 
-> Logo mark adapted from Lucide [`fingerprint-pattern`](https://lucide.dev/icons/fingerprint-pattern) (ISC).
+> Logo mark adapted from Lucide [`fingerprint-pattern`](https://lucide.dev/icons/fingerprint-pattern) (ISC). Brand treatment: **white** fingerprint on an **earthy** ground (`#3F3A32`) with **mustard** highlight (`#C9A227`).
 
 ---
 
@@ -32,20 +39,21 @@ Proven is not a forms app. It is one cohesive platform for:
 
 ## Repository status
 
-Monorepo **foundation scaffolding is in place**. Apps build and start with health endpoints; business domain modules are not implemented yet.
+Monorepo **platform foundation is in place**: Core (tenancy, AuthZ, audit, files), Companies, Users, and Projects modules; NATS event library; Temporal infrastructure (no workflows yet); REST API conventions (`/api/v1`). Safety / Equipment / Documents modules and full Better Auth wiring remain ahead.
 
 ```text
 proven-stack/
 ├── apps/              # web (Next.js), api (Rust), workers (pointer to go/)
-├── crates/            # proven-shared, proven-platform (+ modules/ later)
+├── crates/            # proven-shared, proven-platform, proven-events, proven-temporal
+│   └── modules/       # proven-core, proven-companies, proven-users, proven-projects
 ├── go/                # I/O worker binaries
 ├── packages/          # ui, api-client, pwa-sync, shared configs
 ├── docker/            # Dockerfiles + compose
 ├── contracts/ db/ deploy/ infra/ scripts/ tests/
-├── docs/              # PRD, architecture, engineering
+├── docs/              # PRD, architecture, ADRs, developer handbook
 ├── .github/workflows/ # CI
 ├── .vscode/ .devcontainer/
-├── Makefile
+├── Makefile / justfile
 └── .env.example
 ```
 
@@ -67,7 +75,7 @@ See [Docker Local Development](./docs/engineering/DOCKER_LOCAL_DEVELOPMENT.md) f
 **On the host:**
 
 ```bash
-./scripts/dev/bootstrap.sh   # or: make bootstrap
+./scripts/dev/bootstrap.sh   # or: make bootstrap / just setup
 make docker-deps             # Postgres/Redis/NATS/Temporal/UI
 make dev-api                 # http://127.0.0.1:8080/healthz
 make dev-web                 # http://127.0.0.1:3000  (Node >= 20.19)
@@ -104,6 +112,7 @@ Architecture style: **modular monolith**. Modules own their domains and integrat
 | [Implementation Roadmap](./docs/architecture/IMPLEMENTATION_ROADMAP.md) | **CTO roadmap:** milestones, MVP, path to enterprise |
 | [AGENTS.md](./AGENTS.md) | Engineering principles and hard constraints |
 | [Developer Handbook](./docs/development/README.md) | Canonical onboarding (`just setup`) |
+| [REST API Conventions](./docs/development/REST_API_CONVENTIONS.md) | Envelopes, paging, AuthN/Z, rate limits, OpenAPI |
 | [Contributing](./CONTRIBUTING.md) | Branching, PRs, review expectations |
 | [Development Guide](./docs/engineering/DEVELOPMENT.md) | Pointer + Docker companions |
 | [Docker Local Development](./docs/engineering/DOCKER_LOCAL_DEVELOPMENT.md) | Compose stack, ports, hot reload |

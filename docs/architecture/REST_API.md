@@ -19,7 +19,9 @@ This document defines the **REST API** for Proven’s Construction Compliance Op
 
 It covers conventions (JWT, OAuth-ready auth, versioning, pagination, filtering, sorting, search, rate limits, errors, validation, OpenAPI) and **endpoint documentation** for Companies, Projects, Workers, Equipment, Documents, Training, FLHAs, Inspections, COR, Notifications, Digital Signatures, Reports, and Workflow.
 
-**No implementation.** Contract-level design only.
+**Conventions implemented** — see [ADR-0013](../adr/0013-rest-api-conventions.md) and
+[REST_API_CONVENTIONS.md](../development/REST_API_CONVENTIONS.md) (`proven-shared` wire types +
+`proven-platform` middleware). Endpoint catalog below remains the product surface design.
 
 **Base URL (logical):** `https://api.proven.example/api/v1`
 

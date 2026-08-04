@@ -1,15 +1,23 @@
-//! HTTP middleware stack (request-id, correlation-id, tracing, metrics).
+//! HTTP middleware stack (request-id, correlation-id, tracing, metrics, AuthN/AuthZ, rate limit).
 
+mod api_version;
+mod authn;
+mod authz;
 mod correlation;
 mod http_metrics;
+mod rate_limit;
 
 use axum::http::HeaderName;
 use tower_http::request_id::{MakeRequestUuid, PropagateRequestIdLayer, SetRequestIdLayer};
 use tower_http::trace::{DefaultOnFailure, DefaultOnRequest, DefaultOnResponse, TraceLayer};
 use tracing::Level;
 
+pub use api_version::api_version_layer;
+pub use authn::{authentication_layer, AuthnPolicy};
+pub use authz::{require_permission, AuthzPrincipal};
 pub use correlation::{correlation_layer, CorrelationId};
 pub use http_metrics::http_metrics_layer;
+pub use rate_limit::{rate_limit_layer, RateLimitState};
 
 pub fn request_id_header() -> HeaderName {
     HeaderName::from_static("x-request-id")

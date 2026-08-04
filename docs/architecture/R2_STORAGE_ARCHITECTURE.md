@@ -25,7 +25,9 @@ This document designs **Cloudflare R2** usage for Proven: what is stored (photos
 4. Upload path: **Authorize → Intent → Presign → PUT → Complete (checksum) → AV/process → Available|Quarantine**.  
 5. Secrets and customer data never in key names beyond opaque ids.
 
-**Documentation only — no implementation / no SQL.**
+**Documentation + Core FileApi implementation** — see [ADR-0010](../adr/0010-file-management.md)
+and [FILE_MANAGEMENT.md](../development/FILE_MANAGEMENT.md). Cloudflare SigV4 signer, Go
+media-worker AV, Temporal media workflow, and multipart remain pending integrations.
 
 ---
 

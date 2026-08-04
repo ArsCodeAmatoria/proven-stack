@@ -1,54 +1,85 @@
-//! Temporal client handle (foundation).
+//! Temporal client handle + infrastructure wiring (ADR-0012).
 //!
-//! Full Temporal Rust SDK activity/workflow registration lands with workflows.
-//! This handle stores connection settings and performs a TCP readiness probe.
+//! Uses `proven-temporal` for the workflow client port, worker registration, registries,
+//! retry policies, and health checks. Full Temporal Rust SDK activity/workflow executors
+//! land with `proven-workflows` — registries stay empty here.
 
-use std::net::ToSocketAddrs;
-use std::time::Duration;
-
-use anyhow::{anyhow, Context};
 use proven_config::Config;
-use tokio::net::TcpStream;
-use tokio::time::timeout;
+use proven_temporal::{
+    TemporalClientConfig, TemporalHealth, TemporalHealthChecker, TemporalWorkflowClient,
+    WorkerRegistration, WorkflowClient,
+};
+use tracing::info;
 
-#[derive(Clone, Debug)]
+/// Process-local Temporal infrastructure handle for the API host.
+#[derive(Clone)]
 pub struct TemporalHandle {
-    address: String,
-    namespace: String,
+    client: TemporalWorkflowClient,
+    worker: std::sync::Arc<WorkerRegistration>,
 }
 
 impl TemporalHandle {
     pub fn address(&self) -> &str {
-        &self.address
+        &self.client.config().address
     }
 
     pub fn namespace(&self) -> &str {
-        &self.namespace
+        &self.client.config().namespace
+    }
+
+    pub fn client(&self) -> &TemporalWorkflowClient {
+        &self.client
+    }
+
+    pub fn worker(&self) -> &WorkerRegistration {
+        &self.worker
+    }
+
+    pub fn as_workflow_client(&self) -> &dyn WorkflowClient {
+        &self.client
+    }
+
+    pub async fn health(&self) -> TemporalHealth {
+        let checker = TemporalHealthChecker::new(self.client.config().clone());
+        checker
+            .check(self.worker.workflows(), self.worker.activities())
+            .await
     }
 }
 
 pub async fn connect_temporal(config: &Config) -> anyhow::Result<TemporalHandle> {
-    let address = config.temporal.address.clone();
-    let namespace = config.temporal.namespace.clone();
+    let client_config = TemporalClientConfig::new(
+        config.temporal.address.clone(),
+        config.temporal.namespace.clone(),
+    )
+    .with_identity(format!(
+        "{}@{}",
+        config.observability.service_name, config.temporal.namespace
+    ));
 
-    probe_tcp(&address)
+    let client = TemporalWorkflowClient::connect(client_config.clone())
         .await
-        .with_context(|| format!("temporal TCP probe failed for {address}"))?;
+        .map_err(|err| anyhow::anyhow!(err))?;
 
-    Ok(TemporalHandle { address, namespace })
-}
+    let worker = WorkerRegistration::builder(client_config)
+        .task_queue(client.config().task_queues.domain.clone())
+        .build()
+        .map_err(|err| anyhow::anyhow!(err))?
+        .into_shared();
 
-async fn probe_tcp(address: &str) -> anyhow::Result<()> {
-    let mut addrs = address
-        .to_socket_addrs()
-        .with_context(|| format!("resolve temporal address {address}"))?;
-    let addr = addrs
-        .next()
-        .ok_or_else(|| anyhow!("no addresses resolved for {address}"))?;
+    // Infrastructure-only: start registration bookkeeping (empty registries; no SDK poller).
+    worker
+        .start()
+        .map_err(|err| anyhow::anyhow!(err))?;
 
-    timeout(Duration::from_secs(3), TcpStream::connect(addr))
-        .await
-        .map_err(|_| anyhow!("temporal connect timed out"))?
-        .with_context(|| format!("connect {addr}"))?;
-    Ok(())
+    info!(
+        address = %client.config().address,
+        namespace = %client.config().namespace,
+        task_queue = %worker.task_queue(),
+        workflows = worker.workflows().len(),
+        activities = worker.activities().len(),
+        "temporal infrastructure ready (no workflows registered yet)"
+    );
+
+    Ok(TemporalHandle { client, worker })
 }

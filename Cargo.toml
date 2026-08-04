@@ -8,6 +8,12 @@ members = [
     "crates/proven-config",
     "crates/proven-db",
     "crates/proven-observability",
+    "crates/proven-events",
+    "crates/proven-temporal",
+    "crates/modules/proven-core",
+    "crates/modules/proven-companies",
+    "crates/modules/proven-users",
+    "crates/modules/proven-projects",
 ]
 default-members = ["apps/api"]
 
@@ -20,6 +26,10 @@ publish = false
 [workspace.dependencies]
 proven-shared = { path = "crates/proven-shared" }
 proven-platform = { path = "crates/proven-platform" }
+proven-core = { path = "crates/modules/proven-core" }
+proven-companies = { path = "crates/modules/proven-companies" }
+proven-users = { path = "crates/modules/proven-users" }
+proven-projects = { path = "crates/modules/proven-projects" }
 proven-config = { path = "crates/proven-config" }
 axum = "0.8"
 tokio = { version = "1", features = ["full"] }
@@ -33,7 +43,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 anyhow = "1"
 dotenvy = "0.15"
-sqlx = { version = "0.8", features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "chrono"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "tls-rustls", "postgres", "migrate", "chrono", "uuid"] }
 redis = { version = "0.27", features = ["tokio-comp", "connection-manager"] }
 async-nats = "0.39"
 utoipa = { version = "5", features = ["axum_extras", "chrono"] }
@@ -42,6 +52,8 @@ http = "1"
 chrono = { version = "0.4", default-features = false, features = ["clock", "std", "serde"] }
 proven-db = { path = "crates/proven-db" }
 proven-observability = { path = "crates/proven-observability" }
+proven-events = { path = "crates/proven-events" }
+proven-temporal = { path = "crates/proven-temporal" }
 metrics = "0.24"
 metrics-exporter-prometheus = { version = "0.16", default-features = false }
 opentelemetry = { version = "0.29", default-features = false, features = ["trace"] }
