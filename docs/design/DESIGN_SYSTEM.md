@@ -22,7 +22,7 @@ The system must feel **professional, minimal, and fast**—built for job sites a
 **Documentation only — no implementation.**
 
 Logo mark reference: Lucide [fingerprint-pattern](https://lucide.dev/icons/fingerprint-pattern) (identity / proof).
-README treatment: **white** fingerprint on **earthy** `#3F3A32` with **mustard** `#C9A227` highlight ring (`assets/brand/logo.svg`).
+README treatment: **white** fingerprint on **earthy** `#3F3A32` (`assets/brand/logo.svg`). Highlight / emphasis text uses **mustard** `#C9A227`.
 
 ---
 
@@ -173,7 +173,7 @@ Ink/slate structure + restrained safety accent + proof teal.
 | `color.border.default` | Hairlines | Slate-200/300 |
 | `color.border.strong` | Emphasis | Slate-400 |
 | `color.brand.fg` | Brand wordmark/ink | Deep warm umber / ink (~#2C2620) |
-| `color.brand.accent` | Rare brand accent | **Mustard** `#C9A227` on earthy ground `#3F3A32` (logo mark) |
+| `color.brand.accent` | Highlight / emphasis text | **Mustard** `#C9A227` (not used as a logo ring) |
 
 **Dark foundation**
 

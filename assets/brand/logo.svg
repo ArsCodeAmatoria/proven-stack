@@ -3,7 +3,7 @@
   https://lucide.dev/icons/fingerprint-pattern
   License: ISC (Lucide Icons)
 
-  README / dark-surface variant: white fingerprint on earthy ground with mustard highlight.
+  README / dark-surface variant: white fingerprint on earthy ground (no accent ring).
 -->
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -17,17 +17,6 @@
   <title>Proven</title>
   <!-- Earthy ground -->
   <rect width="24" height="24" rx="5.5" fill="#3F3A32" />
-  <!-- Mustard highlight ring -->
-  <rect
-    x="0.85"
-    y="0.85"
-    width="22.3"
-    height="22.3"
-    rx="4.75"
-    fill="none"
-    stroke="#C9A227"
-    stroke-width="1.15"
-  />
   <!-- White fingerprint -->
   <g
     stroke="#FFFFFF"

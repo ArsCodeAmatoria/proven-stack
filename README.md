@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="assets/brand/logo.svg" alt="Proven logo — white fingerprint on earthy mark with mustard highlight" width="112" height="112" />
+  <img src="assets/brand/logo.svg" alt="Proven logo — white fingerprint on earthy mark" width="112" height="112" />
 </p>
 
 <h1 align="center">Proven</h1>
 
 <p align="center">
-  <strong>Construction Compliance Operating System</strong><br />
+  <img src="assets/brand/tagline.svg" alt="Construction Compliance Operating System" width="520" height="28" /><br />
   Defensible proof that people, equipment, and work are compliant—every day, on every site.
 </p>
 
@@ -15,11 +15,11 @@
   <img alt="Modular monolith" src="https://img.shields.io/badge/architecture-modular%20monolith-6B5E4E?style=flat-square&labelColor=3F3A32" />
 </p>
 
-Proven is built for General Contractors, Prime Contractors, Subcontractors, Crane Companies, Concrete Forming Companies, Civil Contractors, and Industrial Contractors across **Canada, the United States, Australia, and New Zealand**.
+Proven is built for General Contractors, Prime Contractors, Subcontractors, Crane Companies, Concrete Forming Companies, Civil Contractors, and Industrial Contractors across <img src="assets/brand/regions.svg" alt="Canada, the United States, Australia, and New Zealand" height="18" />.
 
 Mobile-first for workers. Desktop-first for supervisors, safety coordinators, project managers, and administrators.
 
-> Logo mark adapted from Lucide [`fingerprint-pattern`](https://lucide.dev/icons/fingerprint-pattern) (ISC). Brand treatment: **white** fingerprint on an **earthy** ground (`#3F3A32`) with **mustard** highlight (`#C9A227`).
+> Logo mark adapted from Lucide [`fingerprint-pattern`](https://lucide.dev/icons/fingerprint-pattern) (ISC). Brand treatment: **white** fingerprint on an **earthy** ground (`#3F3A32`)—no accent ring. Highlight text uses **mustard** (`#C9A227`).
 
 ---
 
